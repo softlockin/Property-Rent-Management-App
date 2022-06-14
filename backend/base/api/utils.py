@@ -40,7 +40,7 @@ def register_social_user(provider, user_id, email, name):
         filtered_user_by_email = User.objects.filter(email=email)
         if filtered_user_by_email.exists():
             if not filtered_user_by_email[0].is_active:
-                raise PermissionDenied(detail=403)
+                raise PermissionDenied({'status': 403, 'detail': 'Account inactive!'})
             if provider == filtered_user_by_email[0].auth_provider:
                 
                 registered_user = authenticate(
@@ -56,7 +56,7 @@ def register_social_user(provider, user_id, email, name):
             
             else:
                 raise AuthenticationFailed(
-                    detail=401
+                    {'status': 401, 'detail': 'The provided google account was registered with email/password.'}
                 )
         else:
             user = {

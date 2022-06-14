@@ -48,6 +48,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     auth_provider = models.CharField(max_length=255, blank=False, null=False, default=AUTH_PROVIDERS['email'])
+    gapi_user_type_set = models.BooleanField(default=False, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -62,10 +63,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         refresh['email'] = self.email
         refresh['username'] = self.username
         refresh['user_type'] = self.user_type
-        if(self.last_login == None):
-            refresh['new_account'] = 'yes'
-        else:
-            refresh['new_account'] = 'no'
+        refresh['gapi_user_type_set'] = self.gapi_user_type_set
+        refresh['provider'] = self.auth_provider
 
         return refresh.access_token
         
@@ -74,10 +73,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         refresh['email'] = self.email
         refresh['username'] = self.username
         refresh['user_type'] = self.user_type
-        if(self.last_login == None):
-            refresh['new_account'] = 'yes'
-        else:
-            refresh['new_account'] = 'no'
+        refresh['gapi_user_type_set'] = self.gapi_user_type_set
+        refresh['provider'] = self.auth_provider
 
         return refresh
     

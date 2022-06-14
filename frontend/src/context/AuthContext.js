@@ -9,16 +9,17 @@ export default AuthContext
 export const AuthProvider = ({children}) => {
     let [authTokens, setAuthTokens] = useState(() => localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null)
     let [user, setUser] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(JSON.parse(localStorage.getItem('authTokens')).access) : null)
+    let [provider, setProvider] = useState('')
+    let [gapiUserType, setGapiUserType] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(JSON.parse(localStorage.getItem('authTokens')).access)['gapi_user_type_set'] : null)
     let [loading, setLoading] = useState(false)
 
     const navigate = useNavigate()
 
-    let loginUser = async (e)=>{
+    let loginUser = async (e) => {
         let data = e
         let status = 200
+        setProvider('google')
         if(e.type){
-            e.preventDefault()
-        
             let response = await fetch('http://127.0.0.1:8000/api/login/', {
                 method: 'POST',
                 headers:{
@@ -28,10 +29,12 @@ export const AuthProvider = ({children}) => {
             })
             data = await response.json()
             status = response.status
+            setProvider('email')
         }
         if(status === 200){
             setAuthTokens(data)
             setUser(jwt_decode(data.access))
+            setGapiUserType(jwt_decode(data.access)['gapi_user_type_set'])
             localStorage.setItem('authTokens', JSON.stringify(data))
             navigate('/')
             return ({status: 200})
@@ -54,6 +57,8 @@ export const AuthProvider = ({children}) => {
         authTokens:authTokens,
         loginUser:loginUser,
         logoutUser:logoutUser,
+        provider:provider,
+        gapiUserType:gapiUserType
     }
 
     let updateToken = async ()=>{
