@@ -52,15 +52,6 @@ export const AuthProvider = ({children}) => {
         navigate('/login')
     }
 
-    let contextData = {
-        user:user,
-        authTokens:authTokens,
-        loginUser:loginUser,
-        logoutUser:logoutUser,
-        provider:provider,
-        gapiUserType:gapiUserType
-    }
-
     let updateToken = async ()=>{
         if (authTokens !== null){
             let response = await fetch('http://127.0.0.1:8000/api/token/refresh/', {
@@ -85,6 +76,15 @@ export const AuthProvider = ({children}) => {
     }
     }
 
+    let contextData = {
+        user:user,
+        authTokens:authTokens,
+        loginUser:loginUser,
+        logoutUser:logoutUser,
+        provider:provider,
+        gapiUserType:gapiUserType,
+        updateToken:updateToken
+    }
 
     useEffect(()=>{
         if(loading){

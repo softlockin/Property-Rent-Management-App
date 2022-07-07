@@ -308,25 +308,27 @@ const RegisterPage = () => {
                         Registration
                     </Typography>
                     <Stack direction="column" justifyContent="flex-start" alignItems="center">
-                        {/* <Divider sx={{width:"90%", borderBottomWidth: "2px", marginBottom: "10px", backgroundColor: `${values.userType === '1' ? '#1976d2' : values.userType === '2' ? '#388e3c' : '#f2f2f2' }`}} /> */}
-                        <Box sx={{justifyContent: "center", width: "90%", display: "flex", alignItems: "center"}}>
+                        <Box sx={{justifyContent: "flex-start", width: "90%", display: "flex", alignItems: "center"}}>
+                            <Typography variant="subtitle2" sx={{ mt: 2, mb: 1 }}>
+                               Account type:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            </Typography>
                             <ToggleButtonGroup
                             orientation="vertical"
                             disabled={values.success ?? true}
                             exclusive
-                            sx={{width: "65%"}}
+                            sx={{position: "relative", left: "7%"}}
                             >
                                 <ToggleButton size="small" onClick={()=>{ values.userType === '1' ? accTypeClick('') : accTypeClick('1') }} selected={values.userType === '1'} value="list" aria-label="list" 
                                     sx={styles.userTypeButton[1]}>
                                     <MapsHomeWorkRoundedIcon sx={{marginRight: "5px"}} />
                                     <Divider orientation="vertical" flexItem />
-                                    &nbsp; I want to list my properties.
+                                    &nbsp; OWNER
                                 </ToggleButton>
                                 <ToggleButton size="small" onClick={()=>{ values.userType === '2' ? accTypeClick('') : accTypeClick('2') }} selected={values.userType === '2'} value="list"
                                     sx={styles.userTypeButton[2]} >
                                     <PersonRoundedIcon sx={{marginRight: "5px"}} />
                                     <Divider orientation="vertical" flexItem />
-                                    &nbsp; I want to find rent.
+                                    &nbsp; TENANT
                                 </ToggleButton>
                             </ToggleButtonGroup>
                         </Box>

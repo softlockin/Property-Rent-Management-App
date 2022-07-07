@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import PasswordResetAPIView, ForgotPasswordAPIView, MyTokenObtainPairView, RegisterAPIView, VerifyEmail, LoginAPIView, PropertyListAPIView, PropertyAPIView, GoogleAuthView
+from .views import PasswordResetAPIView, GapiUserTypeView, ForgotPasswordAPIView, MyTokenObtainPairView, RegisterAPIView, VerifyEmail, LoginAPIView, PropertyListAPIView, PropertyAPIView, GoogleAuthView
 from rest_framework_simplejwt.views import (
     TokenRefreshView, TokenVerifyView
 )
@@ -19,6 +19,7 @@ urlpatterns = [
     path('login/google/', GoogleAuthView().as_view(), name='google-login'),
     path('property-items/', PropertyListAPIView.as_view(), name='get-property-list'),
     path('property/<str:pk>/', PropertyAPIView.as_view(), name='property-details'),
+    path('usertype-set/', GapiUserTypeView().as_view(), name='usertype-set'),
     
 
 

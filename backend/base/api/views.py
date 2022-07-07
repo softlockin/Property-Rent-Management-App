@@ -14,7 +14,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken, Token
-from .serializers import PasswordResetSerializer, ForgotPasswordSerializer, MyTokenObtainPairSerializer, RegisterSerializer, EmailVerificationSerializer, LoginSerializer, PropertyListSerializer, PropertySerializer, GoogleAuthSerializer
+from .serializers import PasswordResetSerializer, SetTypeAfterGapiLogin, ForgotPasswordSerializer, MyTokenObtainPairSerializer, RegisterSerializer, EmailVerificationSerializer, LoginSerializer, PropertyListSerializer, PropertySerializer, GoogleAuthSerializer
 from base.models import User, PropertyItem
 from .utils import Util
 import jwt
@@ -32,6 +32,7 @@ def getRoutes(request):
 @permission_classes([IsAuthenticated])
 class PropertyListAPIView(APIView):
     serializer_class = PropertyListSerializer
+
     def get(self, request):
         user = request.user
         property_items = user.propertyitem_set.all().order_by("-updated_at")
@@ -207,6 +208,30 @@ class LoginAPIView(GenericAPIView):
         user.save(update_fields=["last_login"])
         serializer = self.serializer_class(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+@permission_classes([IsAuthenticated])
+class GapiUserTypeView(GenericAPIView):
+    serializer_class = SetTypeAfterGapiLogin
+
+    def post(self, request):
+        user = request.user
+        data = request.data
+        if user.gapi_user_type_set == True:
+            return Response({"error": "User type already set for this account."}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = self.serializer_class(data=data)
+        if serializer.is_valid():
+            user.user_type = data['user_type']
+            user.gapi_user_type_set = True
+            user.save()
+            return Response({
+                'access': str(user.access()),
+                'refresh': str(user.refresh()),
+                'email': user.email,
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response('Bad request', status=status.HTTP_400_BAD_REQUEST)
+
+
 
 class GoogleAuthView(GenericAPIView):
     serializer_class = GoogleAuthSerializer

@@ -20,7 +20,14 @@ class PropertySerializer(ModelSerializer):
     class Meta:
         model = PropertyItem
         fields= '__all__'
-        
+
+class SetTypeAfterGapiLogin(ModelSerializer):
+    user_type = serializers.ChoiceField(User.USER_TYPES)
+
+    class Meta:
+        model = User
+        fields = ['user_type']    
+
 class RegisterSerializer(ModelSerializer):
     user_type = serializers.ChoiceField(User.USER_TYPES)
     password = serializers.CharField(max_length=128, min_length=6, write_only=True)
@@ -89,7 +96,6 @@ class GoogleAuthSerializer(serializers.Serializer):
 
     def validate_auth_token(self, auth_token):
         user_data = Google.validate(auth_token)
-        
         try:
             user_data['sub']
         except:

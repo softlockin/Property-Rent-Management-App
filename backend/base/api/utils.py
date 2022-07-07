@@ -42,9 +42,8 @@ def register_social_user(provider, user_id, email, name):
             if not filtered_user_by_email[0].is_active:
                 raise PermissionDenied({'status': 403, 'detail': 'Account inactive!'})
             if provider == filtered_user_by_email[0].auth_provider:
-                
                 registered_user = authenticate(
-                    email=email, password=os.getenv('SOCIAL_SECRET'))
+                    email=email, password=os.getenv('SOCIAL_SECRET'))           
                 registered_user.last_login = timezone.now()
                 registered_user.save(update_fields=["last_login"])
                 return {
@@ -90,8 +89,7 @@ class Google:
     @staticmethod
     def validate(auth_token):
         try:
-            idinfo = id_token.verify_oauth2_token(
-                auth_token, requests.Request(), clock_skew_in_seconds=5)
+            idinfo = id_token.verify_oauth2_token(auth_token, requests.Request(), clock_skew_in_seconds=30)
             
             if 'accounts.google.com' in idinfo['iss']:
                 return idinfo
