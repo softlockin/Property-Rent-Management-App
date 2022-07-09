@@ -9,6 +9,7 @@ export default AuthContext
 export const AuthProvider = ({children}) => {
     let [authTokens, setAuthTokens] = useState(() => localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null)
     let [user, setUser] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(JSON.parse(localStorage.getItem('authTokens')).access) : null)
+    let [userType, setUserType] = (useState(() => localStorage.getItem('authTokens') ? jwt_decode(JSON.parse(localStorage.getItem('authTokens')).access)['user_type'] : null))
     let [provider, setProvider] = useState('')
     let [gapiUserType, setGapiUserType] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(JSON.parse(localStorage.getItem('authTokens')).access)['gapi_user_type_set'] : null)
     let [loading, setLoading] = useState(false)
@@ -79,6 +80,7 @@ export const AuthProvider = ({children}) => {
     let contextData = {
         user:user,
         authTokens:authTokens,
+        userType:userType,
         loginUser:loginUser,
         logoutUser:logoutUser,
         provider:provider,

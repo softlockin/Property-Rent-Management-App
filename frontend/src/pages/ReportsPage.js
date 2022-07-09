@@ -7,7 +7,7 @@ import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 import AuthContext from '../context/AuthContext'
 import { TypographyListItem } from '../components/TypographyListItem';
 
-const HomePage = () => {
+const ReportsPage = () => {
 
   const theme = useTheme()
   const styles = {
@@ -25,15 +25,15 @@ const HomePage = () => {
     }
   }
 
+
   return (
-  <>
-    <Box 
-    sx={styles.container}
-    >
-      HomePage
-    </Box>
-  </>
+    <>
+      <Box 
+        sx={styles.container}
+      >
+      Reports page
+      </Box>
+    </>
   )
 }
-
-export default HomePage
+export default ReportsPage

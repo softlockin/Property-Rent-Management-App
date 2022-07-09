@@ -7,7 +7,7 @@ import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 import AuthContext from '../context/AuthContext'
 import { TypographyListItem } from '../components/TypographyListItem';
 
-const HomePage = () => {
+const MapPage = () => {
 
   const theme = useTheme()
   const styles = {
@@ -26,14 +26,12 @@ const HomePage = () => {
   }
 
   return (
-  <>
     <Box 
     sx={styles.container}
     >
-      HomePage
+      Map page
     </Box>
-  </>
   )
 }
 
-export default HomePage
+export default MapPage

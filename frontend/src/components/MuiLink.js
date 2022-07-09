@@ -4,7 +4,7 @@ import { Link as RouterLink, MemoryRouter } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server';
 import { Link, Typography } from '@mui/material';
 
-export const MuiLink = ({ to, variant, text, sx }) => {
+export const MuiLink = ({ to, variant, text }) => {
 
     function Router(props) {
         const { children } = props;

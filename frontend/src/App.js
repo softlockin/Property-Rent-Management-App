@@ -2,27 +2,35 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import PrivateRoute from './utils/PrivateRoute'
 import { AuthProvider } from './context/AuthContext'
 import HomePage from './pages/HomePage'
-import PropertyPage from './pages/PropertyPage';
+import PropertiesPage from './pages/PropertiesPage';
 import LoginPage from './pages/LoginPage'
 import Header from './components/Header'
 import PropertyItemsPage from './pages/PropertyItemsPage';
+import IssueTrackerPage from './pages/IssueTrackerPage'
+import ReportsPage from './pages/ReportsPage'
+import MapPage from './pages/MapPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import RegisterPage from './pages/RegisterPage';
 import AccountActivationPage from './pages/AccountActivationPage';
 import PageNotFound from './pages/PageNotFound';
+import Dashboard from './components/Dashboard';
 
 function App() {
+
   return (
     
       <Router>
         <AuthProvider>
-          {/* <Header/> */}
+          <Dashboard />
           <Routes>
             <Route path="login" element={<LoginPage />} />
             <Route element={<PrivateRoute />}>
               <Route exact path="/" element={<HomePage />} />
-              <Route path="property/:id" element={<PropertyPage />} />
+              <Route path="property-list" element={<PropertiesPage />} />
+              <Route path="issue-tracker" element={<IssueTrackerPage />} />
+              <Route path="reports" element={<ReportsPage />} />
+              <Route path="map" element={<MapPage />} />
             </Route>
             <Route path="forgot-password" element={<ForgotPasswordPage />} />
             <Route path="reset-password/:token" element={<ResetPasswordPage />} />
