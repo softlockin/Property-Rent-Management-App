@@ -3,6 +3,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.conf import settings
 from django.contrib.auth.models import (
     AbstractBaseUser, BaseUserManager, PermissionsMixin)
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class UserManager(BaseUserManager):
@@ -17,13 +18,13 @@ class UserManager(BaseUserManager):
         user.save()
         return user
 
-    def create_superuser(self, username, email, password=None):
+    def create_superuser(self, username, email, password=None, user_type='1'):
         if password is None:
             raise TypeError('Password should not be empty!')
         if username is None:
             raise TypeError('Username is mandatory')
         
-        user=self.create_user(username, email, password)
+        user=self.create_user(username, email, user_type, password)
         user.is_superuser = True
         user.is_staff = True
         user.username = username
@@ -79,12 +80,53 @@ class User(AbstractBaseUser, PermissionsMixin):
         return refresh
     
 class PropertyItem(models.Model):
+
+    CURRENCY = (
+        (1, 'EUR'),
+        (2, "LEI")
+    )
+
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=25)
-    address = models.TextField(max_length=128, blank=True, default='')
+    price = models.PositiveIntegerField(null=False)
+    rent_due_day = models.PositiveIntegerField(validators=[
+        MinValueValidator(1),
+        MaxValueValidator(31)], blank=True, default=1)
+    currency = models.PositiveSmallIntegerField(choices=CURRENCY, default=2)
+    address = models.TextField(max_length=256, null=False)
+    city = models.TextField(max_length=50, null=False)
     tenant = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='tenant', on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.name
+
+class RentInvoice(models.Model):
+    property_id = models.PositiveSmallIntegerField(blank=False)
+    owner_id = models.PositiveSmallIntegerField(blank=False)
+    tenant_id = models.PositiveSmallIntegerField(blank=False)
+    price = models.PositiveIntegerField()
+    currency = models.CharField(blank=False, max_length=4, default='LEI')
+    created_at = models.DateField(auto_now_add=True)
+    due_day = models.DateField()
+
+class Issue(models.Model):
+    name = models.CharField(max_length=25, null=False)
+    property_id = models.ForeignKey(PropertyItem, on_delete=models.CASCADE)
+    description = models.TextField(max_length=256, null=False)
+    closed = models.BooleanField(default=False, null=False)
 
     def __str__(self):
         return self.name
+
+class OwnerSummary(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+    properties_listed = models.PositiveSmallIntegerField(default=0)
+    income = models.PositiveIntegerField(default=0)
+    expenses = models.PositiveIntegerField(default=0)
+    open_issues = models.PositiveSmallIntegerField(default=0)
+    overdue = models.PositiveSmallIntegerField(default=0)
+    
+    def __str__(self):
+        return self.user

@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react'
 import AuthContext from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
-import GoogleLoginButton from '../components/GoogleLoginButton';
+import GoogleLoginButton from '../components/login/GoogleLoginButton';
 import { Alert, Container, Divider, IconButton, InputAdornment, Paper, Stack, TextField, Typography } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
@@ -9,7 +9,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import KeyRoundedIcon from '@mui/icons-material/KeyRounded';
-import { MuiLink } from '../components/MuiLink';
+import { MuiLink } from '../components/custom/MuiLink';
 import backgroundImg from '../assets/images/bgpic.jpg';
 
 

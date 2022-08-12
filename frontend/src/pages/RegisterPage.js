@@ -5,7 +5,7 @@ import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import React, { useState, useEffect } from 'react'
-import { MuiLink } from '../components/MuiLink';
+import { MuiLink } from '../components/custom/MuiLink';
 
 const RegisterPage = () => {
     // USER_TYPES = (

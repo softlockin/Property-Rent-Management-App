@@ -5,7 +5,8 @@ import MapsHomeWorkRoundedIcon from '@mui/icons-material/MapsHomeWorkRounded';
 import ArrowRightRoundedIcon from '@mui/icons-material/ArrowRightRounded';
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 import AuthContext from '../context/AuthContext'
-import { TypographyListItem } from '../components/TypographyListItem';
+import { TypographyListItem } from '../components/custom/TypographyListItem';
+import PageHeading from '../components/static/PageHeading';
 
 const ReportsPage = () => {
 
@@ -14,7 +15,6 @@ const ReportsPage = () => {
     container: {
         width: "85vw", 
         height: "100%",
-        backgroundColor: 'yellow',
         position: "absolute", 
         top: "0", 
         left: "15vw",
@@ -31,7 +31,16 @@ const ReportsPage = () => {
       <Box 
         sx={styles.container}
       >
-      Reports page
+         <Stack
+          direction="column" 
+          justifyContent="flex-start"
+          alignItems="center"
+          spacing={4}
+          mr={5}
+          ml={5}
+        >
+        <PageHeading title="Reports" />
+      </Stack>
       </Box>
     </>
   )

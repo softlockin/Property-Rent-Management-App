@@ -1,7 +1,7 @@
 import { Alert, Stack } from '@mui/material'
 import React from 'react'
 import { useEffect, useState, useContext } from "react"
-import AuthContext from '../context/AuthContext'
+import AuthContext from '../../context/AuthContext'
 
 const clientId = process.env.REACT_APP_GOOGLE_CID
 

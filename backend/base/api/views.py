@@ -16,6 +16,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken, Token
 from .serializers import PasswordResetSerializer, SetTypeAfterGapiLogin, ForgotPasswordSerializer, MyTokenObtainPairSerializer, RegisterSerializer, EmailVerificationSerializer, LoginSerializer, PropertyListSerializer, PropertySerializer, GoogleAuthSerializer
 from base.models import User, PropertyItem
+from .permissions import IsTenantPermission
 from .utils import Util
 import jwt
 from django.conf import settings
@@ -29,12 +30,20 @@ def getRoutes(request):
     ]
     return Response(routes)
 
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsTenantPermission])
 class PropertyListAPIView(APIView):
     serializer_class = PropertyListSerializer
 
     def get(self, request):
         user = request.user
+        if user.user_type == 2:
+            try:
+                property_item = PropertyItem.objects.get(tenant_id=user.id)
+                serializer = PropertyListSerializer(property_item)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except PropertyItem.DoesNotExist:
+                return Response({"error": "There is no property linked to this account."}, status=status.HTTP_404_NOT_FOUND)
+            
         property_items = user.propertyitem_set.all().order_by("-updated_at")
         serializer = PropertyListSerializer(property_items, many=True)
         return Response(serializer.data)

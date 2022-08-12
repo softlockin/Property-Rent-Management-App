@@ -88,7 +88,7 @@ const ForgotPasswordPage = () => {
     <>
     <Container>
       <Stack direction="row" justifyContent="center" mt={10}>
-        <Paper elevation={5} sx={{borderRadius:"35px", textAlign:"center", padding:"10px", width:"422px"}}>
+        <Paper elevation={2} sx={{borderRadius:"35px", textAlign:"center", padding:"10px", width:"422px"}}>
           <Typography
            sx={{padding:"35px"}}
            variant="h6"

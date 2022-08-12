@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react'
 import jwt_decode from "jwt-decode"
-import { Box, Button, Modal, Stack, Typography, useTheme } from "@mui/material"
-import MapsHomeWorkRoundedIcon from '@mui/icons-material/MapsHomeWorkRounded';
-import ArrowRightRoundedIcon from '@mui/icons-material/ArrowRightRounded';
-import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
+import { Box, Stack, useTheme } from "@mui/material"
 import AuthContext from '../context/AuthContext'
-import { TypographyListItem } from '../components/TypographyListItem';
+import PageHeading from '../components/static/PageHeading';
+import Summary from '../components/home/Summary';
+import QuickAdd from '../components/home/QuickAdd';
+
 
 const HomePage = () => {
 
@@ -14,10 +14,10 @@ const HomePage = () => {
     container: {
         width: "85vw", 
         height: "100%",
-        backgroundColor: 'yellow',
-        position: "absolute", 
+        position: "absolute",
         top: "0", 
         left: "15vw",
+        overflow: "auto",
         [theme.breakpoints.down('lg')]: {
             width: "calc(100% - 56px)",
             left: "56px"
@@ -25,15 +25,38 @@ const HomePage = () => {
     }
   }
 
-  return (
-  <>
-    <Box 
-    sx={styles.container}
-    >
-      HomePage
-    </Box>
-  </>
-  )
+    return (
+    <>
+      <Box 
+      sx={styles.container}
+      >
+        <Stack
+          direction="column" 
+          justifyContent="flex-start"
+          alignItems="flex-start"
+          spacing={4}
+          mr={5}
+          ml={5}
+        >
+          <PageHeading title="Dashboard" />
+          <Summary />
+        </Stack>
+        <Stack
+          direction="row" 
+          justifyContent="space-between"
+          alignItems="flex-start"
+          // spacing={2}
+          mr={5}
+          mt={4}
+          ml={5}
+        >
+          <QuickAdd />
+          <QuickAdd />
+        </Stack>
+      </Box>
+    </>
+    )
+
 }
 
 export default HomePage

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Container, Alert, Paper, Stack, TextField, Typography } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import { MuiLink } from '../components/MuiLink';
+import { MuiLink } from '../components/custom/MuiLink';
 
 
 

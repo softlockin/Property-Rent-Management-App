@@ -9,8 +9,8 @@ export default AuthContext
 export const AuthProvider = ({children}) => {
     let [authTokens, setAuthTokens] = useState(() => localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null)
     let [user, setUser] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(JSON.parse(localStorage.getItem('authTokens')).access) : null)
-    let [userType, setUserType] = (useState(() => localStorage.getItem('authTokens') ? jwt_decode(JSON.parse(localStorage.getItem('authTokens')).access)['user_type'] : null))
-    let [provider, setProvider] = useState('')
+    let [userType, setUserType] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(JSON.parse(localStorage.getItem('authTokens')).access)['user_type'] : null)
+    let [provider, setProvider] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(JSON.parse(localStorage.getItem('authTokens')).access)['provider'] : null)
     let [gapiUserType, setGapiUserType] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(JSON.parse(localStorage.getItem('authTokens')).access)['gapi_user_type_set'] : null)
     let [loading, setLoading] = useState(false)
 
@@ -37,7 +37,6 @@ export const AuthProvider = ({children}) => {
             setUser(jwt_decode(data.access))
             setGapiUserType(jwt_decode(data.access)['gapi_user_type_set'])
             localStorage.setItem('authTokens', JSON.stringify(data))
-            navigate('/')
             return ({status: 200})
         }else if(status === 401){
             return ({status: 401, error: data['error']})
@@ -85,8 +84,24 @@ export const AuthProvider = ({children}) => {
         logoutUser:logoutUser,
         provider:provider,
         gapiUserType:gapiUserType,
-        updateToken:updateToken
+        updateToken:updateToken,
     }
+
+    useEffect(() => {
+        if(gapiUserType === true || provider === 'email'){
+            navigate('/')
+        }else if(gapiUserType === false && provider === 'google'){
+            navigate('complete-registration')
+        }
+    }, [])
+
+    useEffect(()=>{
+        if(gapiUserType === true || provider === 'email'){
+            navigate('/')
+        }else if(gapiUserType === false && provider === 'google'){
+            navigate('complete-registration')
+        }
+    }, [user, gapiUserType])
 
     useEffect(()=>{
         if(loading){

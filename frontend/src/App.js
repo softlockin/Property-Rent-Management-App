@@ -4,7 +4,6 @@ import { AuthProvider } from './context/AuthContext'
 import HomePage from './pages/HomePage'
 import PropertiesPage from './pages/PropertiesPage';
 import LoginPage from './pages/LoginPage'
-import Header from './components/Header'
 import PropertyItemsPage from './pages/PropertyItemsPage';
 import IssueTrackerPage from './pages/IssueTrackerPage'
 import ReportsPage from './pages/ReportsPage'
@@ -14,7 +13,8 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 import RegisterPage from './pages/RegisterPage';
 import AccountActivationPage from './pages/AccountActivationPage';
 import PageNotFound from './pages/PageNotFound';
-import Dashboard from './components/Dashboard';
+import Dashboard from './components/static/Dashboard';
+import CompleteRegistration from './pages/CompleteRegistration';
 
 function App() {
 
@@ -31,6 +31,7 @@ function App() {
               <Route path="issue-tracker" element={<IssueTrackerPage />} />
               <Route path="reports" element={<ReportsPage />} />
               <Route path="map" element={<MapPage />} />
+              <Route path="complete-registration" element={<CompleteRegistration />} />
             </Route>
             <Route path="forgot-password" element={<ForgotPasswordPage />} />
             <Route path="reset-password/:token" element={<ResetPasswordPage />} />

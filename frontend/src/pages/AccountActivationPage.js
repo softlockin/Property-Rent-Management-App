@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import jwt_decode from "jwt-decode"
 import { useParams } from 'react-router-dom'
 import { Container, Alert, Paper, Stack, Typography, Button, SvgIcon } from '@mui/material';
-import { MuiLink } from '../components/MuiLink';
+import { MuiLink } from '../components/custom/MuiLink';
 
 const AccountActivationPage = () => {
     let { token } = useParams()
