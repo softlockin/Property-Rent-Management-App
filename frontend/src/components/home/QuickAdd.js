@@ -5,7 +5,7 @@ import AuthContext from '../../context/AuthContext'
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import React, { useState, useContext, useEffect } from 'react'
 
-const QuickAdd = () => {
+const QuickAdd = (props) => {
 
     const {authTokens} = useContext(AuthContext)
     const [loading, setLoading] = useState(false)
@@ -136,13 +136,16 @@ const QuickAdd = () => {
             setLoading(false)
             
             if(status === 201){
-                setSnackbar(prev => ({
-                    ...prev,
-                    open: true,
-                    type: 'success',
-                    message: 'Property added!'
-
-                }))
+                setTimeout(function(){
+                    setSnackbar(prev => ({
+                        ...prev,
+                        open: true,
+                        type: 'success',
+                        message: 'Property added!'
+    
+                    }))
+                }, 500)
+                
                 clearInput()
                 setTimeout(function(){
                     setSnackbar(prev => ({
@@ -150,6 +153,10 @@ const QuickAdd = () => {
                         open: false,
                     })) 
                 }, 3500)
+                props.setData(prev => ({
+                    ...prev,
+                    properties_listed: prev.properties_listed + 1
+                }))
             }else{
                 setSnackbar(prev => ({
                     ...prev,
@@ -239,12 +246,17 @@ const QuickAdd = () => {
 
         {/* //Quick add property component */}
 
-        <Paper elevation={3} sx={{width: "48%", borderRadius: "10px"}}>
+        <Paper elevation={3} sx={{width: "48%", minHeight: "380px", borderRadius: "10px", "&.MuiPaper-root": {marginLeft: "0px"}}}>
             <Typography variant="h5" sx={{color: "#02143d", fontWeight: "600", margin: "25px 0 0 25px"}}>
                 Add property
             </Typography>
             <form noValidate autoComplete='off' onSubmit={handleSubmit}>
                 <Grid container spacing={2} sx={{width: "100%", padding: "25px"}}>
+                    <Grid item md={12}>
+                        <Typography variant="body2" sx={{color: "#7d7d7d"}}>
+                            Enter property details to add it to your account.
+                        </Typography>
+                    </Grid>
                     <Grid item md={7}>
                         <Typography variant="subtitle2" sx={{color: "#02143d"}}>
                             Name
@@ -278,7 +290,7 @@ const QuickAdd = () => {
                             type="text"
                             variant="filled"
                             hiddenLabel
-                            placeholder="Price"
+                            placeholder="0.00"
                             fullWidth
                             margin="normal"
                             value={inputFields.price}

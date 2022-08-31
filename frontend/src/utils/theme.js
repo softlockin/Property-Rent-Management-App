@@ -30,10 +30,12 @@ export const theme = createTheme({
       MuiFormHelperText: {
           styleOverrides: {
               root: {
+                  width: "141px",
                   fontFamily: "'Rubik', regular",
                   borderRadius: "5px",
                   background: "#f2f2f2",
-                  paddingLeft: "5px"
+                  paddingLeft: "5px",
+                  margin: "3px 14px 0px 14px",
                 },
           },
         },
@@ -104,6 +106,27 @@ export const theme = createTheme({
               backgroundColor: 'transparent',
             },
             
+          }
+        },
+        MuiMenuItem:{
+          styleOverrides: {
+            root: {
+              fontFamily: "'Rubik', regular",
+            }
+          }
+        },
+        MuiSelect:{
+          styleOverrides: {
+            select: {
+              fontFamily: "'Rubik', regular",
+            }
+          }
+        },
+        MuiPopover:{
+          styleOverrides: {
+            paper: {
+              maxHeight: "200px",
+            }
           }
         },
         MuiAlert: {

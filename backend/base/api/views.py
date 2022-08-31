@@ -14,10 +14,11 @@ from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken, Token
-from .serializers import PasswordResetSerializer, SetTypeAfterGapiLogin, ForgotPasswordSerializer, MyTokenObtainPairSerializer, RegisterSerializer, EmailVerificationSerializer, LoginSerializer, PropertyListSerializer, PropertySerializer, GoogleAuthSerializer
-from base.models import User, PropertyItem
+from .serializers import LinkUserToPropertyRequestSerializer, SummaryFetchSerializer, PasswordResetSerializer, SetTypeAfterGapiLogin, ForgotPasswordSerializer, MyTokenObtainPairSerializer, RegisterSerializer, EmailVerificationSerializer, LoginSerializer, PropertyListSerializer, PropertySerializer, GoogleAuthSerializer
+from base.models import User, PropertyItem, OwnerSummary
 from .permissions import IsTenantPermission
 from .utils import Util
+from .owner_summary_creation import create_summary
 import jwt
 from django.conf import settings
 
@@ -50,10 +51,13 @@ class PropertyListAPIView(APIView):
 
     def post(self, request):
         user = request.user
+        owner_summary = OwnerSummary.objects.get(user_id=user.id)
         request.data['owner'] = user.id
         serializer = PropertySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            owner_summary.properties_listed += 1
+            owner_summary.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -80,7 +84,7 @@ class PropertyAPIView(APIView):
         user = request.user
         property_item = self.get_object(pk)
         if property_item.owner.id == user.id:
-            serializer = PropertySerializer(instance=property_item, data=request.data)
+            serializer = PropertySerializer(instance=property_item, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -97,6 +101,41 @@ class PropertyAPIView(APIView):
         else:
             return Response("You are not authorized to delete this property!", status=status.HTTP_401_UNAUTHORIZED)
 
+@permission_classes([IsAuthenticated])
+class LinkUserToPropertyRequestAPIView(APIView):
+    serializer_class = LinkUserToPropertyRequestSerializer
+
+    def post(self, request):
+        data = request.data
+        try:
+            property_item = PropertyItem.objects.get(pk=data['property_id'])
+            try:
+                user = User.objects.get(email=data['email'])
+                if request.user.id != property_item.owner_id:
+                    return Response({'error': 'You are not the owner of this property!'}, status=status.HTTP_400_BAD_REQUEST)
+                if user.user_type == 1:
+                    return Response({'error': 'User not valid!'}, status=status.HTTP_400_BAD_REQUEST)
+                if property_item.tenant_id != None:
+                    return Response({'error': 'Property already has a tenant!'}, status=status.HTTP_400_BAD_REQUEST)
+                serializer = self.serializer_class(data=data)
+                if serializer.is_valid():
+                    new_token = RefreshToken.for_user(user).access_token
+                    link = 'http://localhost:3000/link-account/'+str(new_token) 
+                    data={'to_email': user.email, 'link': link, 
+                    'username': user.username, 'reason': 'user_link', 
+                    'address': property_item.address+', '+property_item.city, 
+                    'price': str(property_item.price)+(' EUR' if property_item.currency == 1 else ' LEI'), 
+                    'due_day': data['due_day']}
+
+                    Util.SendDynamic(data)
+
+                return Response({'message': 'Email sent!'}, status=status.HTTP_200_OK)
+            except:
+                return Response({'error': 'User does not exist!'}, status=status.HTTP_404_NOT_FOUND)
+        except:
+            return Response({'message': 'Something went wrong!'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 class RegisterAPIView(GenericAPIView):
     serializer_class = RegisterSerializer
 
@@ -107,6 +146,10 @@ class RegisterAPIView(GenericAPIView):
             serializer.save()
             user_data = serializer.data
             user = User.objects.get(email=user_data['email'].lower())
+
+            # Owner summary DB record creation
+            if user.user_type == 1:
+                create_summary(user.id)
 
             token = RefreshToken.for_user(user).access_token
             token['email'] = user.email
@@ -199,7 +242,7 @@ class VerifyEmail(APIView):
                 return Response({'message': 'Email sent!'}, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response({{'message': 'Something went wrong!'}}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'Something went wrong!'}, status=status.HTTP_400_BAD_REQUEST)
             
 
 class LoginAPIView(GenericAPIView):
@@ -231,6 +274,11 @@ class GapiUserTypeView(GenericAPIView):
         if serializer.is_valid():
             user.user_type = data['user_type']
             user.gapi_user_type_set = True
+
+            # Owner summray DB record creation
+            if user.user_type == 1:
+                create_summary(user.id)
+
             user.save()
             return Response({
                 'access': str(user.access()),
@@ -240,7 +288,15 @@ class GapiUserTypeView(GenericAPIView):
         else:
             return Response('Bad request', status=status.HTTP_400_BAD_REQUEST)
 
-
+@permission_classes([IsAuthenticated])
+class SummaryFetchView(GenericAPIView):
+    def get(self, request):
+        try:
+            summary = OwnerSummary.objects.get(user_id=request.user.id)
+            serializer = SummaryFetchSerializer(summary)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response({"error": "No summary for this account!"}, status=status.HTTP_200_OK)
 
 class GoogleAuthView(GenericAPIView):
     serializer_class = GoogleAuthSerializer

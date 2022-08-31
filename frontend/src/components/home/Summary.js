@@ -1,7 +1,8 @@
 import { Grid, Paper, Typography } from '@mui/material'
-import React, { useState, useContext, useEffect } from 'react'
+import React from 'react'
 
-const Summary = () => {
+const Summary = ({data}) => {
+
   return (
     <Paper elevation={3} sx={{width: "100%", borderRadius: "10px"}}>
             <Grid container spacing={2} sx={{width: "100%", padding: "25px"}}>
@@ -10,7 +11,7 @@ const Summary = () => {
                         Total properties
                     </Typography>
                     <Typography variant="h4" sx={{color: "#02143d"}}>
-                        5
+                        {data['properties_listed']}
                     </Typography>
                 </Grid>
                 <Grid item sm={2.4}>
@@ -18,7 +19,7 @@ const Summary = () => {
                         Total income
                     </Typography>
                     <Typography variant="h4" sx={{color: "#02143d"}}>
-                        0 lei
+                        {data['income']} lei
                     </Typography>
                 </Grid>
                 <Grid item sm={2.4}>
@@ -26,7 +27,7 @@ const Summary = () => {
                         Total expenses
                     </Typography>
                     <Typography variant="h4" sx={{color: "#02143d"}}>
-                        50 lei
+                        {data['expenses']} lei
                     </Typography>
                 </Grid>
                 <Grid item sm={2.4}>
@@ -34,15 +35,15 @@ const Summary = () => {
                         Open issues
                     </Typography>
                     <Typography variant="h4" sx={{color: "#02143d"}}>
-                        1
+                        {data['open_issues']}
                     </Typography>
                 </Grid>
                 <Grid item sm={2.4}>
                     <Typography variant="subtitle2" sx={{color: "#7d7d7d"}}>
                         Overdue
                     </Typography>
-                    <Typography variant="h4" sx={{color: "#e60000"}}>
-                        5
+                    <Typography variant="h4" sx={{color: `${data['overdue']>0 ? "#e60000" : "#02143d"}`}}>
+                        {data['overdue']}
                     </Typography>
                 </Grid>
             </Grid>

@@ -3,7 +3,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib import auth
 import json
 import os
-from base.models import User, PropertyItem
+from base.models import User, PropertyItem, OwnerSummary
 from base.api.utils import Google, register_social_user, generate_username
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
@@ -14,6 +14,11 @@ from rest_framework.response import Response
 class PropertyListSerializer(ModelSerializer):
     class Meta:
         model = PropertyItem
+        fields= '__all__'
+
+class SummaryFetchSerializer(ModelSerializer):
+    class Meta:
+        model = OwnerSummary
         fields= '__all__'
 
 class PropertySerializer(ModelSerializer):
@@ -81,6 +86,15 @@ class PasswordResetSerializer(ModelSerializer):
         model = User
         fields = ['password']
 
+class LinkUserToPropertyRequestSerializer(ModelSerializer):
+    property_id = serializers.IntegerField(min_value=1)
+    email = serializers.EmailField(max_length=128, min_length=3)
+    due_day = serializers.IntegerField(min_value=1, max_value=31)
+
+    class Meta:
+        model = PropertyItem
+        fields = ['property_id', 'email', 'due_day']
+
 class LoginSerializer(ModelSerializer):
     email = serializers.EmailField(max_length=128, min_length=3)
     password = serializers.CharField(max_length=68, min_length=6, write_only=True)
@@ -118,19 +132,3 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['username'] = user.username
         token['email'] = user.email
         return token
-
-# class ActivationLinkResendSerializer(TokenObtainPairSerializer):
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-
-#         self.fields["password"].Required = False
-
-#         def validate(self, attrs):
-#             attrs.update({'password': ''})
-#             return super(ActivationLinkResendSerializer, self).validate(attrs)
-        
-#         def get_token(cls, user):
-#             token = super().get_token(user)
-#             token['username'] = user.username
-#             token['email'] = user.email
-#             return token

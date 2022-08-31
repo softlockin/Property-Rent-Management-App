@@ -129,4 +129,4 @@ class OwnerSummary(models.Model):
     overdue = models.PositiveSmallIntegerField(default=0)
     
     def __str__(self):
-        return self.user
+        return str(self.user)

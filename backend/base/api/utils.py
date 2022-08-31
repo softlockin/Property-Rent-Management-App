@@ -14,19 +14,29 @@ from sendgrid.helpers.mail import Mail
 
 class Util:
     def SendDynamic(data):
-        TEMPLATES = ['d-c88217f162ff487693df541c32cf8ec0', 'd-96e8c4184a4b427489de4dbf7b9d6c80']
+        TEMPLATES = ['d-c88217f162ff487693df541c32cf8ec0', 'd-96e8c4184a4b427489de4dbf7b9d6c80', 'd-b8e37da71881482c96cb89faf06e9698']
 
         FROM_EMAIL = ('kyky0100@gmail.com', 'Cristian Fleancu')
-        TEMPLATE_ID = TEMPLATES[1] if data['reason'] == 'register' else TEMPLATES[0] if data['reason'] == 'reset' else None
+        TEMPLATE_ID = TEMPLATES[1] if data['reason'] == 'register' else TEMPLATES[0] if data['reason'] == 'reset' else TEMPLATES[2] if data['reason'] == 'user_link' else None
         TO_EMAILS = [(data['to_email'], data['username']),]
         message = Mail(
             from_email=FROM_EMAIL,
             to_emails=TO_EMAILS)
 
-        message.dynamic_template_data = {
-            'user': f'{data["username"]}',
-            'url': f'{data["link"]}',
-        }
+        if TEMPLATE_ID == TEMPLATES[2]:
+            message.dynamic_template_data = {
+                'user': f'{data["username"]}',
+                'url': f'{data["link"]}',
+                'address': f'{data["address"]}',
+                'price': f'{data["price"]}',
+                'due_day': f'{data["due_day"]}'
+            }
+        else:
+            message.dynamic_template_data = {
+                'user': f'{data["username"]}',
+                'url': f'{data["link"]}',
+            }
+            
         message.template_id = TEMPLATE_ID
         try:
             sg = SendGridAPIClient(os.getenv('SENDGRID_API'))

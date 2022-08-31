@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useState, useContext } from 'react'
 import AuthContext from '../context/AuthContext'
 import { Box, Button, Modal, Stack, Typography } from "@mui/material"
 import { TypographyListItem } from '../components/custom/TypographyListItem';
@@ -22,8 +21,6 @@ const CompleteRegistration = () => {
             outline: 'none'
         },
     }
-
-    const navigate = useNavigate()
 
     const {authTokens, logoutUser, user} = useContext(AuthContext)
     const [disabled, setDisabled] = useState(false)

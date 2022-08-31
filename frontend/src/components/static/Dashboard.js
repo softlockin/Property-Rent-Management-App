@@ -1,10 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
-import jwt_decode from "jwt-decode"
-import { Box, Divider, Button, Modal, Stack, Typography, List, ListItem, ListItemButton, ListItemIcon, ListItemText, useTheme } from "@mui/material"
-import MapsHomeWorkRoundedIcon from '@mui/icons-material/MapsHomeWorkRounded';
-import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
+import { Box, Divider, Stack, Typography, List, ListItemButton, ListItemIcon, ListItemText, useTheme } from "@mui/material"
 import AuthContext from '../../context/AuthContext'
-import { TypographyListItem } from '../custom/TypographyListItem';
 import { Link, useMatch, useResolvedPath } from 'react-router-dom'
 import GridViewRoundedIcon from '@mui/icons-material/GridViewRounded';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
@@ -115,21 +111,10 @@ const Dashboard = () => {
         }
     }
 
-  const [checkGapiUserType, setCheckGapiUserType] = useState(null)
-  const [checkProvider, setCheckProvider] = useState(null)
   const {logoutUser, user} = useContext(AuthContext)
   const [style, setStyle] = useState(null)
   const [userType, setUserType] = useState('')
   const [barVisible, setBarVisible] = useState(true)
-
-  // const checkUser = () => {
-  //   if(localStorage.getItem('authTokens')){
-  //     setUsername(jwt_decode(JSON.parse(localStorage.getItem('authTokens')).access)['username'])
-  //     setCheckGapiUserType(jwt_decode(JSON.parse(localStorage.getItem('authTokens')).access)['gapi_user_type_set'])
-  //     setCheckProvider(jwt_decode(JSON.parse(localStorage.getItem('authTokens')).access)['provider'])
-  //     setUserType(jwt_decode(JSON.parse(localStorage.getItem('authTokens')).access)['user_type'])
-  //   }
-  // }
 
   function CustomListButton({ to, icon, text }) {
     const resolvedPath = useResolvedPath(to)
@@ -172,11 +157,6 @@ const Dashboard = () => {
         setStyle(styles.tenant)
     }
   }, [userType])
-  
-  // useEffect(()=> {
-    
-  //   }
-  // }, [])
 
 if(barVisible){
   return (
