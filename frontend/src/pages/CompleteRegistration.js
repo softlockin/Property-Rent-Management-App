@@ -1,9 +1,10 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import AuthContext from '../context/AuthContext'
 import { Box, Button, Modal, Stack, Typography } from "@mui/material"
 import { TypographyListItem } from '../components/custom/TypographyListItem';
 import MapsHomeWorkRoundedIcon from '@mui/icons-material/MapsHomeWorkRounded';
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
+import { useNavigate } from 'react-router-dom'
 
 const CompleteRegistration = () => {
 
@@ -24,6 +25,7 @@ const CompleteRegistration = () => {
 
     const {authTokens, logoutUser, user} = useContext(AuthContext)
     const [disabled, setDisabled] = useState(false)
+    const navigate = useNavigate()
 
     const selectType = async (type) => {
         setDisabled(true)
@@ -46,6 +48,12 @@ const CompleteRegistration = () => {
             logoutUser()
         }
       }
+    
+      useEffect(()=>{
+        if(user.gapi_user_type_set === true || user.provider === 'email'){
+          navigate('/')
+        }
+      }, [])
 
   return (
     <Modal

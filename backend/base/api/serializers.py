@@ -95,6 +95,15 @@ class LinkUserToPropertyRequestSerializer(ModelSerializer):
         model = PropertyItem
         fields = ['property_id', 'email', 'due_day']
 
+class AcceptLinkUserToPropertySerializer(ModelSerializer):
+    property_id = serializers.IntegerField(min_value=1)
+    email = serializers.EmailField(max_length=128, min_length=3)
+    due_day = serializers.IntegerField(min_value=1, max_value=31)
+    
+    class Meta:
+        model = PropertyItem
+        fields = ['property_id', 'email', 'due_day']
+
 class LoginSerializer(ModelSerializer):
     email = serializers.EmailField(max_length=128, min_length=3)
     password = serializers.CharField(max_length=68, min_length=6, write_only=True)

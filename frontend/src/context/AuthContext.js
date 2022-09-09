@@ -88,17 +88,13 @@ export const AuthProvider = ({children}) => {
     }
 
     useEffect(() => {
-        if(gapiUserType === true || provider === 'email'){
-            navigate('/')
-        }else if(gapiUserType === false && provider === 'google'){
+        if(gapiUserType === false && provider === 'google'){
             navigate('complete-registration')
         }
     }, [])
 
     useEffect(()=>{
-        if(gapiUserType === true || provider === 'email'){
-            navigate('/')
-        }else if(gapiUserType === false && provider === 'google'){
+        if(gapiUserType === false && provider === 'google'){
             navigate('complete-registration')
         }
     }, [user, gapiUserType])

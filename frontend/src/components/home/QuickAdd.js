@@ -178,18 +178,18 @@ const QuickAdd = (props) => {
 
         // Fields validation
 
-        let emptyFormData = []
+        let invalidFormData = []
 
         for (let i = 0; i < e.target.length; i++){
             if(e.target.elements[i].getAttribute("name") !== null){
                 if(e.target.elements[i].value === ''){
-                    emptyFormData.push(e.target.elements[i].getAttribute("name"))
+                    invalidFormData.push(e.target.elements[i].getAttribute("name"))
                 }
             }
             }
         
 
-        emptyFormData.forEach((item) => (
+        invalidFormData.forEach((item) => (
             setErrors(prev => ({
             ...prev,
             [item]: {
@@ -199,6 +199,19 @@ const QuickAdd = (props) => {
         ),
         );
         
+        if(e.target.name.value !== ''){
+            if(!(/^.{0,30}$/).test(e.target.name.value)){
+                setErrors(prev=> ({
+                    ...prev,
+                    name: {
+                        raised: true,
+                        message: 'Maximum 30 characters.'
+                    }
+                }));
+                invalidFormData.push("name")
+            }
+        }
+
         if(!(/^[0-9]+([.][0-9]+)?$/).test(e.target.price.value)){
             setErrors(prev=> ({
                 ...prev,
@@ -207,7 +220,7 @@ const QuickAdd = (props) => {
                     message: 'Invalid entry.'
                 }
             }));
-            emptyFormData.push("price")
+            invalidFormData.push("price")
         }else if(e.target.price.value[0] === '0'){
             setErrors(prev=> ({
                 ...prev,
@@ -216,10 +229,10 @@ const QuickAdd = (props) => {
                     message: 'Must be greater than 0.'
                 }
             }));
-            emptyFormData.push("price")
+            invalidFormData.push("price")
         }
 
-        if (emptyFormData.length > 0){
+        if (invalidFormData.length > 0){
             setLoading(false)
             return;
         }
@@ -254,7 +267,7 @@ const QuickAdd = (props) => {
                 <Grid container spacing={2} sx={{width: "100%", padding: "25px"}}>
                     <Grid item md={12}>
                         <Typography variant="body2" sx={{color: "#7d7d7d"}}>
-                            Enter property details to add it to your account.
+                            Enter the details of the property you want to add.
                         </Typography>
                     </Grid>
                     <Grid item md={7}>

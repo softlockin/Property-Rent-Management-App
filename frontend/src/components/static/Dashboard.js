@@ -9,7 +9,7 @@ import ArticleRoundedIcon from '@mui/icons-material/ArticleRounded';
 import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 
-const Dashboard = () => {
+const Dashboard = (props) => {
     const theme = useTheme()
     const styles = {
         logo: {
@@ -114,7 +114,6 @@ const Dashboard = () => {
   const {logoutUser, user} = useContext(AuthContext)
   const [style, setStyle] = useState(null)
   const [userType, setUserType] = useState('')
-  const [barVisible, setBarVisible] = useState(true)
 
   function CustomListButton({ to, icon, text }) {
     const resolvedPath = useResolvedPath(to)
@@ -139,16 +138,16 @@ const Dashboard = () => {
   }
 
   useEffect(()=>{
-    if(user){
+    if(user && props.otherActions === false){
       setUserType(user['user_type'])
 
       if(user['gapi_user_type_set'] === true || user['provider'] === 'email'){
-        setBarVisible(true)
+        props.setBarVisible(true)
       }
     }else{
-      setBarVisible(false)
+      props.setBarVisible(false)
     }
-    }, [user])
+    }, [user, props.otherActions])
   
   useEffect(()=>{
     if(userType === 1){
@@ -158,7 +157,7 @@ const Dashboard = () => {
     }
   }, [userType])
 
-if(barVisible){
+if(props.barVisible){
   return (
     <>
     <Box sx={styles.dashboard}>

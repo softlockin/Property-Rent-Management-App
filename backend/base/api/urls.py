@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import SummaryFetchView, PasswordResetAPIView, GapiUserTypeView, ForgotPasswordAPIView, MyTokenObtainPairView, RegisterAPIView, VerifyEmail, LoginAPIView, PropertyListAPIView, PropertyAPIView, GoogleAuthView, LinkUserToPropertyRequestAPIView
+from .views import SummaryFetchView, PasswordResetAPIView, GapiUserTypeView, ForgotPasswordAPIView, MyTokenObtainPairView, RegisterAPIView, VerifyEmail, LoginAPIView, PropertyListAPIView, PropertyAPIView, GoogleAuthView, LinkUserToPropertyRequestAPIView, AcceptLinkUserToPropertyRequestAPIView
 from rest_framework_simplejwt.views import (
     TokenRefreshView, TokenVerifyView
 )
@@ -21,6 +21,6 @@ urlpatterns = [
     path('property/<str:pk>/', PropertyAPIView.as_view(), name='property-details'),
     path('usertype-set/', GapiUserTypeView.as_view(), name='usertype-set'),
     path('fetch-summary/', SummaryFetchView.as_view(), name='fetch-summary'),
-    path('link-request/', LinkUserToPropertyRequestAPIView().as_view(), name='link-request' )
-    
+    path('link-request/', LinkUserToPropertyRequestAPIView().as_view(), name='link-request' ),
+    path('accept-request/', AcceptLinkUserToPropertyRequestAPIView().as_view(), name='acept-request' )
 ]

@@ -69,7 +69,9 @@ const HomePage = () => {
   }, [])
 
   useEffect(()=>{
-    fetchProperties()
+    if(user.user_type === 1){
+      fetchProperties()
+    }
   }, [data])
 
     return (
@@ -86,7 +88,7 @@ const HomePage = () => {
           ml={5}
         >
           <PageHeading title="Dashboard" />
-          <Summary data={data} />
+          {user.user_type === 1 ? <Summary data={data} /> : null}
         </Stack>
         <Stack
           direction={matches ? "row" : "column"}
@@ -98,8 +100,8 @@ const HomePage = () => {
           ml={5}
           mb={3}
         >
-          <QuickAdd setData={setData}/>
-          <TenantInvite properties={properties}/>
+          {user.user_type === 1 ? <QuickAdd setData={setData}/> : null}
+          {user.user_type === 1 ? <TenantInvite properties={properties}/> : null}
         </Stack>
       </Box>
     </>

@@ -87,7 +87,7 @@ class PropertyItem(models.Model):
     )
 
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
-    name = models.CharField(max_length=25)
+    name = models.CharField(max_length=30)
     price = models.PositiveIntegerField(null=False)
     rent_due_day = models.PositiveIntegerField(validators=[
         MinValueValidator(1),
