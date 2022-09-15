@@ -8,7 +8,7 @@ import AuthContext from '../context/AuthContext'
 import { TypographyListItem } from '../components/custom/TypographyListItem';
 import PageHeading from '../components/static/PageHeading';
 
-const ReportsPage = () => {
+const InvoicesPage = () => {
 
   const theme = useTheme()
   const styles = {
@@ -39,10 +39,10 @@ const ReportsPage = () => {
           mr={5}
           ml={5}
         >
-        <PageHeading title="Reports" />
+        <PageHeading title="Invoices" />
       </Stack>
       </Box>
     </>
   )
 }
-export default ReportsPage
+export default InvoicesPage

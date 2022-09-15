@@ -1,12 +1,15 @@
-import { LoadingButton } from '@mui/lab'
-import { Grid, Paper, Typography, TextField, Select, MenuItem, Snackbar, Alert } from '@mui/material'
+import { LoadingButton } from '@mui/lab';
+import { Grid, Paper, Typography, TextField, Select, MenuItem, Snackbar, Alert, useTheme } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import Slide from '@mui/material/Slide';
-import AuthContext from '../../context/AuthContext'
+import AuthContext from '../../context/AuthContext';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext, useEffect } from 'react';
 
 const QuickAdd = (props) => {
 
+    const theme = useTheme()
+    const matches = useMediaQuery(theme.breakpoints.up('lg'))
     const {authTokens} = useContext(AuthContext)
     const [loading, setLoading] = useState(false)
     const [snackbar, setSnackbar] = useState({
@@ -259,18 +262,18 @@ const QuickAdd = (props) => {
 
         {/* //Quick add property component */}
 
-        <Paper elevation={3} sx={{width: "48%", minHeight: "380px", borderRadius: "10px", "&.MuiPaper-root": {marginLeft: "0px"}}}>
+        <Paper elevation={3} sx={{width: matches ? "48%" : "100%", minHeight: "380px", borderRadius: "10px", "&.MuiPaper-root": {marginLeft: "0px"}}}>
             <Typography variant="h5" sx={{color: "#02143d", fontWeight: "600", margin: "25px 0 0 25px"}}>
                 Add property
             </Typography>
             <form noValidate autoComplete='off' onSubmit={handleSubmit}>
                 <Grid container spacing={2} sx={{width: "100%", padding: "25px"}}>
-                    <Grid item md={12}>
+                    <Grid item sm={12}>
                         <Typography variant="body2" sx={{color: "#7d7d7d"}}>
                             Enter the details of the property you want to add.
                         </Typography>
                     </Grid>
-                    <Grid item md={7}>
+                    <Grid item sm={7}>
                         <Typography variant="subtitle2" sx={{color: "#02143d"}}>
                             Name
                         </Typography>
@@ -293,7 +296,7 @@ const QuickAdd = (props) => {
                             helperText={errors.name['message']}
                             />
                     </Grid>
-                    <Grid item md={3}>
+                    <Grid item sm={3}>
                         <Typography variant="subtitle2" sx={{color: "#02143d"}}>
                             Rent
                         </Typography>
@@ -316,7 +319,7 @@ const QuickAdd = (props) => {
                             helperText={errors.price['message']}
                             />
                     </Grid>
-                    <Grid item md={2}>
+                    <Grid item sm={2}>
                         <Typography variant="subtitle2" sx={{color: "#02143d"}}>
                             Currency
                         </Typography>
@@ -332,7 +335,7 @@ const QuickAdd = (props) => {
                             <MenuItem value={2}>LEI</MenuItem>
                         </Select>
                     </Grid>
-                    <Grid item md={6}>
+                    <Grid item sm={6}>
                         <Typography variant="subtitle2" sx={{color: "#02143d"}}>
                             Street
                         </Typography>
@@ -355,7 +358,7 @@ const QuickAdd = (props) => {
                             helperText={errors.street['message']}
                             />
                     </Grid>
-                    <Grid item md={3}>
+                    <Grid item sm={3}>
                         <Typography variant="subtitle2" sx={{color: "#02143d"}}>
                             Number
                         </Typography>
@@ -378,7 +381,7 @@ const QuickAdd = (props) => {
                             helperText={errors.number['message']}
                             />
                     </Grid>
-                    <Grid item md={3}>
+                    <Grid item sm={3}>
                         <Typography variant="subtitle2" sx={{color: "#02143d"}}>
                             City
                         </Typography>

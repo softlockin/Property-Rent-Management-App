@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react'
-import jwt_decode from "jwt-decode"
 import { Box, Stack, useTheme } from "@mui/material"
 import useMediaQuery from '@mui/material/useMediaQuery';
 import AuthContext from '../context/AuthContext'
@@ -7,6 +6,8 @@ import PageHeading from '../components/static/PageHeading';
 import Summary from '../components/home/Summary';
 import QuickAdd from '../components/home/QuickAdd';
 import TenantInvite from '../components/home/TenantInvite';
+import LatestIssues from '../components/home/LatestIssues';
+import LatestInvoices from '../components/home/LatestInvoices';
 
 
 const HomePage = () => {
@@ -73,7 +74,7 @@ const HomePage = () => {
       fetchProperties()
     }
   }, [data])
-
+  if(user.user_type === 1){
     return (
     <>
       <Box 
@@ -88,24 +89,41 @@ const HomePage = () => {
           ml={5}
         >
           <PageHeading title="Dashboard" />
-          {user.user_type === 1 ? <Summary data={data} /> : null}
+          <Summary data={data} />
         </Stack>
         <Stack
           direction={matches ? "row" : "column"}
           justifyContent={matches ? "space-between" : "flex-start"}
-          alignItems="flex-start"
+          alignItems={matches ? "flex-start" : "center"}
           spacing={2}
           mr={5}
           mt={4}
           ml={5}
           mb={3}
         >
-          {user.user_type === 1 ? <QuickAdd setData={setData}/> : null}
-          {user.user_type === 1 ? <TenantInvite properties={properties}/> : null}
+          <QuickAdd setData={setData}/>
+          <TenantInvite properties={properties}/>
+        </Stack>
+        <Stack
+          direction={matches ? "row" : "column"}
+          justifyContent={matches ? "space-between" : "flex-start"}
+          alignItems={matches ? "flex-start" : "center"}
+          spacing={2}
+          mr={5}
+          mt={4}
+          ml={5}
+          mb={3}
+        >
+          <LatestIssues />
+          <LatestInvoices />
         </Stack>
       </Box>
     </>
-    )
+    )}else{
+      return (
+        <div>Tenant homepage</div>
+      )
+    }
 
 }
 

@@ -188,7 +188,7 @@ if(props.barVisible){
                     <CustomListButton to="/" icon={<GridViewRoundedIcon />} text="Dashboard" />
                     <CustomListButton to="/property-list" icon={<HomeRoundedIcon />} text="Properties" />
                     <CustomListButton to="/issue-tracker" icon={<ErrorRoundedIcon />} text="Issue Tracker" />
-                    <CustomListButton to="/reports" icon={<ArticleRoundedIcon />} text="Reports" />
+                    <CustomListButton to="/invoices" icon={<ArticleRoundedIcon />} text="Invoices" />
                     <CustomListButton to="/map" icon={<LocationOnRoundedIcon />} text="Map" />
                     <Divider sx={{width:"90%", borderBottomWidth: "2px", marginTop: "10px", marginBottom: "10px", position: "relative", left: "5%", backgroundColor: `${userType === 1 ? theme.palette.primary.main : theme.palette.secondary.main}`}} />
                     <ListItemButton

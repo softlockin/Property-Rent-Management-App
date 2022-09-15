@@ -3,7 +3,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib import auth
 import json
 import os
-from base.models import User, PropertyItem, OwnerSummary
+from base.models import User, PropertyItem, OwnerSummary, RentInvoice, Issue
 from base.api.utils import Google, register_social_user, generate_username
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
@@ -114,6 +114,16 @@ class LoginSerializer(ModelSerializer):
         model = User
         fields = ['email', 'password', 'access', 'refresh']
 
+class IssueSerializer(ModelSerializer):
+    class Meta:
+        model = Issue
+        fields = '__all__'
+
+
+class RentInvoiceSerializer(ModelSerializer):
+    class Meta:
+        model = RentInvoice
+        fields = '__all__'
 class GoogleAuthSerializer(serializers.Serializer):
     auth_token = serializers.CharField()
 

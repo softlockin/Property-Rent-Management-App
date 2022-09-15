@@ -1,16 +1,19 @@
-import { LoadingButton } from '@mui/lab'
-import React, { useState, useContext, useEffect } from 'react'
-import { Grid, Paper, Typography, TextField, Select, MenuItem, Snackbar, Alert, useTheme, FormHelperText, FormControl } from '@mui/material'
+import { LoadingButton } from '@mui/lab';
+import React, { useState, useContext, useEffect } from 'react';
+import { Paper, Typography, TextField, Select, MenuItem, Snackbar, Alert, useTheme, FormHelperText, FormControl } from '@mui/material';
+import Grid2 from '@mui/material/Unstable_Grid2';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import Slide from '@mui/material/Slide';
 import Tooltip from '@mui/material/Tooltip';
 import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import InsertLinkRoundedIcon from '@mui/icons-material/InsertLinkRounded';
-import AuthContext from '../../context/AuthContext'
+import AuthContext from '../../context/AuthContext';
 
 const TenantInvite = ({properties}) => {
 
     const dueDayInfo = "If day is not valid when the invoice is generated, the last valid day of the month will be auto-selected."
     const theme = useTheme()
+    const matches = useMediaQuery(theme.breakpoints.up('lg'))
     const [loading, setLoading] = useState(false)
     const {authTokens} = useContext(AuthContext)
     const [selectedProperty, setSelectedProperty] = useState(null)
@@ -202,19 +205,19 @@ const TenantInvite = ({properties}) => {
             {snackbar.message}
         </Alert>
     </Snackbar>
-    <Paper elevation={3} sx={{width: "calc(48% - 10px)", minHeight: "380px", borderRadius: "10px", borderLeft: `10px solid ${theme.palette.primary.main}`, "&.MuiPaper-root": {marginLeft: "0px"}}}>
+    <Paper elevation={3} sx={{width: matches ? "calc(48% - 10px)" : "calc(100% - 10px)", minHeight: "380px", borderRadius: "10px", borderLeft: `10px solid ${theme.palette.primary.main}`, "&.MuiPaper-root": {marginLeft: "0px"}}}>
             <Typography variant="h5" sx={{color: "#02143d", fontWeight: "600", margin: "25px 0 0 15px"}}>
                 Link tenant to property {selectedProperty?.name}
             </Typography>
             <form noValidate autoComplete='off' onSubmit={handleSubmit}>
-                <Grid container spacing={1} sx={{width: "100%", padding: "25px 0px 25px 15px"}}>
-                    <Grid item md={12}>
+                <Grid2 container spacing={1} sx={{width: "100%", padding: "25px 0px 25px 15px"}}>
+                    <Grid2 sm={12}>
                         <Typography variant="body2" sx={{color: "#7d7d7d"}}>
                             Select the rented property, enter the user's email address and select the recurring day when the rent will be due. {<br />}
                             An email for tenant's confirmation will be sent.
                         </Typography>
-                    </Grid>
-                    <Grid item md={5}>
+                    </Grid2>
+                    <Grid2 sm={5}>
                         <Typography variant="subtitle2" sx={{color: "#02143d"}}>
                             Property
                         </Typography>
@@ -240,8 +243,8 @@ const TenantInvite = ({properties}) => {
                             </Select>
                             {errors.property['raised'] ? <FormHelperText>{errors.property['message']}</FormHelperText> : null}
                         </FormControl>
-                    </Grid>
-                    <Grid item md={4.5}>
+                    </Grid2>
+                    <Grid2 sm={4.5}>
                         <Typography variant="subtitle2" sx={{color: "#02143d"}}>
                             Tenant's email
                         </Typography>
@@ -263,8 +266,8 @@ const TenantInvite = ({properties}) => {
                             sx={errors.email['raised'] ? styles.errorTextField : styles.textField}
                             helperText={errors.email['message']}
                             />
-                    </Grid>
-                    <Grid item md={2.5}>
+                    </Grid2>
+                    <Grid2 sm={2.5}>
                         <Typography variant="subtitle2" sx={{color: "#02143d"}}>
                             Due day
                             <Tooltip title={dueDayInfo} placement="top">
@@ -289,9 +292,9 @@ const TenantInvite = ({properties}) => {
                             }
                             
                         </Select>
-                    </Grid>
+                    </Grid2>
                 
-                    <Grid item md={12} >
+                    <Grid2 sm={12} >
                         <>
                             <Typography variant="caption" sx={{color: "#7d7d7d"}}>
                                 Address: {selectedProperty ? (selectedProperty[0].address +", " + selectedProperty[0].city) : null}
@@ -302,8 +305,8 @@ const TenantInvite = ({properties}) => {
                             Rent: {selectedProperty ? (selectedProperty[0].price + (selectedProperty[0].currency === 1 ? " EUR" : " LEI")) : null}
                         </Typography>
                         </>
-                    </Grid>
-                </Grid>
+                    </Grid2>
+                </Grid2>
                 <LoadingButton
                     type="submit"
                     loadingPosition="start"

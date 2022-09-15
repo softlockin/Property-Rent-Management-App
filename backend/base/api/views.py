@@ -14,11 +14,12 @@ from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken, Token
-from .serializers import AcceptLinkUserToPropertySerializer, LinkUserToPropertyRequestSerializer, SummaryFetchSerializer, PasswordResetSerializer, SetTypeAfterGapiLogin, ForgotPasswordSerializer, MyTokenObtainPairSerializer, RegisterSerializer, EmailVerificationSerializer, LoginSerializer, PropertyListSerializer, PropertySerializer, GoogleAuthSerializer
-from base.models import User, PropertyItem, OwnerSummary
+from .serializers import AcceptLinkUserToPropertySerializer, LinkUserToPropertyRequestSerializer, SummaryFetchSerializer, PasswordResetSerializer, SetTypeAfterGapiLogin, ForgotPasswordSerializer, MyTokenObtainPairSerializer, RegisterSerializer, EmailVerificationSerializer, LoginSerializer, PropertyListSerializer, PropertySerializer, GoogleAuthSerializer, RentInvoiceSerializer, IssueSerializer
+from base.models import User, PropertyItem, OwnerSummary, RentInvoice, Issue
 from .permissions import IsTenantPermission
 from .utils import Util
 from .owner_summary_creation import create_summary
+import datetime
 import jwt
 from django.conf import settings
 
@@ -135,6 +136,7 @@ class LinkUserToPropertyRequestAPIView(APIView):
         except:
             return Response({'message': 'Something went wrong!'}, status=status.HTTP_400_BAD_REQUEST)
 
+@permission_classes([IsAuthenticated, IsTenantPermission])
 class AcceptLinkUserToPropertyRequestAPIView(APIView):
     serializer_class = AcceptLinkUserToPropertySerializer
 
@@ -163,6 +165,111 @@ class AcceptLinkUserToPropertyRequestAPIView(APIView):
                 return Response({'error': 'Property not found!'}, status=status.HTTP_404_NOT_FOUND)
         except:
              return Response({'error': 'Link is invalid!'}, status=status.HTTP_400_BAD_REQUEST)
+
+@permission_classes([IsAuthenticated])
+class RentInvoiceAPIView(APIView):
+    serializer_class = RentInvoiceSerializer
+
+    def get(self, request):
+        user = request.user
+        if user.user_type == 2:
+            try:
+                invoices = RentInvoice.objects.filter(tenant_id=user.id).order_by('-id')
+                serializer = RentInvoiceSerializer(invoices, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except RentInvoice.DoesNotExist:
+                return Response({"message": "There are no invoices."}, status=status.HTTP_204_NO_CONTENT)
+            
+        invoices = RentInvoice.objects.filter(owner_id=user.id).order_by('-id')
+        serializer = RentInvoiceSerializer(invoices, many=True)
+        return Response(serializer.data)
+
+@permission_classes([IsAuthenticated])
+class IssueAPIView(APIView):
+    serializer_class = IssueSerializer
+
+    def get(self, request):
+        user = request.user
+            
+        if user.user_type == 1:
+            try:
+                issues = Issue.objects.filter(property_owner=user.id).order_by('-id')
+                if 'recent' in request.query_params and request.query_params['recent'].lower() == 'true':
+                    today = datetime.date.today()
+                    seven_days_before = today - datetime.timedelta(days=7)
+                    recent_issues = issues.filter(created_at__gte=seven_days_before)[:3]
+                    serializer = IssueSerializer(recent_issues, many=True)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                try:
+                    serializer = IssueSerializer(issues, many=True)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                except:
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            except:
+                return Response({"message": "There are no issues."}, status=status.HTTP_204_NO_CONTENT)
+        if user.user_type == 2:
+            try:
+                tenant_at = PropertyItem.objects.get(tenant_id=user.id)
+                issues = Issue.objects.filter(linked_to_property=tenant_at.id).order_by('-id')
+                serializer = IssueSerializer(issues, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except:
+                return Response({"message": "There are no issues."}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"error": "Something went wrong. Try again!"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request):
+        user = request.user
+        data = request.data
+        if user.user_type == 1:
+            try:
+                property_item = PropertyItem.objects.get(id=data['linked_to_property'])
+                if(property_item.owner.id == user.id):
+                    data['property_owner'] = user.id
+                    data['property_name'] = property_item.name
+                    serializer = self.serializer_class(data=data)
+                    if serializer.is_valid():
+                        serializer.save()
+                        return Response(serializer.data, status=status.HTTP_201_CREATED)
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'You are not the owner.'}, status=status.HTTP_401_UNAUTHORIZED)
+            except:
+                return Response({'error': 'Property data error.'}, status=status.HTTP_400_BAD_REQUEST)
+        if user.user_type == 2:
+            try:
+                property_item = PropertyItem.objects.get(id=data['linked_to_property'])
+                if(property_item.tenant.id == user.id):
+                    data['property_owner'] = property_item.owner.id
+                    data['property_name'] = property_item.name
+                    serializer = self.serializer_class(data=data)
+                    if serializer.is_valid():
+                        serializer.save()
+                        return Response(serializer.data, status=status.HTTP_201_CREATED)
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'You are not a tenant at this property.'}, status=status.HTTP_401_UNAUTHORIZED)
+            except:
+                return Response({'error': 'Property data error.'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def put(self, request):
+        user = request.user
+        data = request.data
+        try:
+            issue = Issue.objects.get(id=data['id'])
+            if(issue.closed == False):
+                if issue.property_owner.id == user.id:
+                    serializer = IssueSerializer(instance=issue, data=request.data, partial=True)
+                    if serializer.is_valid():
+                        if('cost' in data and data['cost'] > 0):
+                            owner_summary = OwnerSummary.objects.get(user_id=user.id)
+                            owner_summary.expenses += data['cost']
+                            owner_summary.save()
+                        serializer.save()
+                        return Response(serializer.data, status=status.HTTP_200_OK)
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'You are not the owner.'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'error': 'Issue is already closed.'}, status=status.HTTP_403_FORBIDDEN)
+        except:
+            return Response({'error': 'Issue not found.'}, status=status.HTTP_400_BAD_REQUEST)
+
 class RegisterAPIView(GenericAPIView):
     serializer_class = RegisterSerializer
 

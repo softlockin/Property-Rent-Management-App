@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import SummaryFetchView, PasswordResetAPIView, GapiUserTypeView, ForgotPasswordAPIView, MyTokenObtainPairView, RegisterAPIView, VerifyEmail, LoginAPIView, PropertyListAPIView, PropertyAPIView, GoogleAuthView, LinkUserToPropertyRequestAPIView, AcceptLinkUserToPropertyRequestAPIView
+from .views import SummaryFetchView, IssueAPIView, PasswordResetAPIView, GapiUserTypeView, ForgotPasswordAPIView, MyTokenObtainPairView, RegisterAPIView, VerifyEmail, LoginAPIView, PropertyListAPIView, PropertyAPIView, GoogleAuthView, LinkUserToPropertyRequestAPIView, AcceptLinkUserToPropertyRequestAPIView, RentInvoiceAPIView
 from rest_framework_simplejwt.views import (
     TokenRefreshView, TokenVerifyView
 )
@@ -18,9 +18,11 @@ urlpatterns = [
     path('login/', LoginAPIView.as_view(), name='login'),
     path('login/google/', GoogleAuthView.as_view(), name='google-login'),
     path('property-items/', PropertyListAPIView.as_view(), name='get-property-list'),
+    path('invoices/', RentInvoiceAPIView.as_view(), name='get-invoices-list'),
     path('property/<str:pk>/', PropertyAPIView.as_view(), name='property-details'),
     path('usertype-set/', GapiUserTypeView.as_view(), name='usertype-set'),
     path('fetch-summary/', SummaryFetchView.as_view(), name='fetch-summary'),
-    path('link-request/', LinkUserToPropertyRequestAPIView().as_view(), name='link-request' ),
-    path('accept-request/', AcceptLinkUserToPropertyRequestAPIView().as_view(), name='acept-request' )
+    path('link-request/', LinkUserToPropertyRequestAPIView.as_view(), name='link-request' ),
+    path('accept-request/', AcceptLinkUserToPropertyRequestAPIView.as_view(), name='accept-request'),
+    path('issues/', IssueAPIView.as_view(), name='get-issues-list'),
 ]

@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth.models import (
     AbstractBaseUser, BaseUserManager, PermissionsMixin)
 from django.core.validators import MinValueValidator, MaxValueValidator
+import datetime
 
 
 class UserManager(BaseUserManager):
@@ -110,12 +111,20 @@ class RentInvoice(models.Model):
     currency = models.CharField(blank=False, max_length=4, default='LEI')
     created_at = models.DateField(auto_now_add=True)
     due_day = models.DateField()
+    paid = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.id
 
 class Issue(models.Model):
     name = models.CharField(max_length=25, null=False)
-    property_id = models.ForeignKey(PropertyItem, on_delete=models.CASCADE)
+    linked_to_property = models.ForeignKey(PropertyItem, on_delete=models.CASCADE)
+    property_name = models.CharField(max_length=30, null=True)
     description = models.TextField(max_length=256, null=False)
     closed = models.BooleanField(default=False, null=False)
+    property_owner = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
+    cost = models.PositiveIntegerField(default=0)
+    created_at = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return self.name

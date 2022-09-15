@@ -7,7 +7,7 @@ import PropertiesPage from './pages/PropertiesPage';
 import LoginPage from './pages/LoginPage'
 import PropertyItemsPage from './pages/PropertyItemsPage';
 import IssueTrackerPage from './pages/IssueTrackerPage'
-import ReportsPage from './pages/ReportsPage'
+import InvoicesPage from './pages/InvoicesPage'
 import MapPage from './pages/MapPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
@@ -35,7 +35,7 @@ function App() {
               <Route exact path="/" element={<HomePage />} />
               <Route path="property-list" element={<PropertiesPage />} />
               <Route path="issue-tracker" element={<IssueTrackerPage />} />
-              <Route path="reports" element={<ReportsPage />} />
+              <Route path="invoices" element={<InvoicesPage />} />
               <Route path="map" element={<MapPage />} />
               <Route path="complete-registration" element={<CompleteRegistration />} />
               <Route path="link-account/:token" element={<AccountLinkingPage setOtherActions={setOtherActions} />} />
