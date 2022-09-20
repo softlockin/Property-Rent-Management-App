@@ -30,7 +30,7 @@ export const theme = createTheme({
       MuiFormHelperText: {
           styleOverrides: {
               root: {
-                  width: "141px",
+                  width: "70%",
                   fontFamily: "'Rubik', regular",
                   borderRadius: "5px",
                   background: "#f2f2f2",

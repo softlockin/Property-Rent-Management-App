@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.urls import reverse
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import update_last_login
+from django.db.models import F
 from django.contrib.sites.shortcuts import get_current_site
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -177,12 +178,45 @@ class RentInvoiceAPIView(APIView):
                 invoices = RentInvoice.objects.filter(tenant_id=user.id).order_by('-id')
                 serializer = RentInvoiceSerializer(invoices, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            except RentInvoice.DoesNotExist:
-                return Response({"message": "There are no invoices."}, status=status.HTTP_204_NO_CONTENT)
-            
+            except:
+                return Response({"error": "Something went wrong."}, status=status.HTTP_400_BAD_REQUEST)
+        
         invoices = RentInvoice.objects.filter(owner_id=user.id).order_by('-id')
-        serializer = RentInvoiceSerializer(invoices, many=True)
-        return Response(serializer.data)
+        if 'recent' in request.query_params and request.query_params['recent'].lower() == 'true':  
+            today = datetime.date.today()
+            seven_days_before = today - datetime.timedelta(days=7)
+            recent_invoices = invoices.filter(created_at__gte=seven_days_before)[:3]
+            serializer = RentInvoiceSerializer(recent_invoices, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        try:
+            serializer = RentInvoiceSerializer(invoices, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response({"error": "Something went wrong."}, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request):
+        user = request.user
+        data = request.data
+        try:
+            invoice = RentInvoice.objects.get(id=data['id'])
+            if(invoice.paid == False):
+                if invoice.owner_id == user.id:
+                    try:
+                        filtered_data = {k: data[k] for k in data if k in ["id", "paid"]}
+                        serializer = RentInvoiceSerializer(instance=invoice, data=filtered_data, partial=True)
+                        serializer.is_valid()
+                        if(filtered_data['paid'] == True):
+                            owner_summary = OwnerSummary.objects.get(user_id=user.id)
+                            owner_summary.income = F('income') + (invoice.price*5 if invoice.currency == 'EUR' else invoice.price)
+                            owner_summary.save()
+                        serializer.save()
+                        return Response(serializer.data, status=status.HTTP_200_OK)
+                    except:
+                        return Response({'error': 'Only paid status can be changed'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'You are not the owner.'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'error': 'Invoice is already paid.'}, status=status.HTTP_403_FORBIDDEN)
+        except:
+            return Response({'error': 'Invoice not found.'}, status=status.HTTP_400_BAD_REQUEST)
 
 @permission_classes([IsAuthenticated])
 class IssueAPIView(APIView):
@@ -223,11 +257,14 @@ class IssueAPIView(APIView):
         if user.user_type == 1:
             try:
                 property_item = PropertyItem.objects.get(id=data['linked_to_property'])
-                if(property_item.owner.id == user.id):
+                if(property_item.owner_id == user.id):
+                    owner_summary = OwnerSummary.objects.get(user_id=user.id)
                     data['property_owner'] = user.id
                     data['property_name'] = property_item.name
                     serializer = self.serializer_class(data=data)
                     if serializer.is_valid():
+                        owner_summary.open_issues = F('open_issues') + 1
+                        owner_summary.save()
                         serializer.save()
                         return Response(serializer.data, status=status.HTTP_201_CREATED)
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -237,11 +274,14 @@ class IssueAPIView(APIView):
         if user.user_type == 2:
             try:
                 property_item = PropertyItem.objects.get(id=data['linked_to_property'])
-                if(property_item.tenant.id == user.id):
+                if(property_item.tenant_id == user.id):
+                    owner_summary = OwnerSummary.objects.get(user_id=property_item.owner_id)
                     data['property_owner'] = property_item.owner.id
                     data['property_name'] = property_item.name
                     serializer = self.serializer_class(data=data)
                     if serializer.is_valid():
+                        owner_summary.open_issues = F('open_issues') + 1
+                        owner_summary.save()
                         serializer.save()
                         return Response(serializer.data, status=status.HTTP_201_CREATED)
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -255,17 +295,19 @@ class IssueAPIView(APIView):
         try:
             issue = Issue.objects.get(id=data['id'])
             if(issue.closed == False):
-                if issue.property_owner.id == user.id:
+                if issue.property_owner_id == user.id:
                     serializer = IssueSerializer(instance=issue, data=request.data, partial=True)
                     if serializer.is_valid():
-                        if('cost' in data and data['cost'] > 0):
+                        if('closed' in data and data['closed'] == True):
                             owner_summary = OwnerSummary.objects.get(user_id=user.id)
-                            owner_summary.expenses += data['cost']
+                            owner_summary.open_issues = F('open_issues') - 1
+                            if('cost' in data and data['cost'] > 0):
+                                owner_summary.expenses = F('expenses') + data['cost']
                             owner_summary.save()
-                        serializer.save()
+                            serializer.save()
                         return Response(serializer.data, status=status.HTTP_200_OK)
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-                return Response({'error': 'You are not the owner.'}, status=status.HTTP_401_UNAUTHORIZED)
+                return Response({'error': 'Only the owner can close the issue.'}, status=status.HTTP_401_UNAUTHORIZED)
             return Response({'error': 'Issue is already closed.'}, status=status.HTTP_403_FORBIDDEN)
         except:
             return Response({'error': 'Issue not found.'}, status=status.HTTP_400_BAD_REQUEST)

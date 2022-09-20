@@ -74,6 +74,7 @@ const HomePage = () => {
       fetchProperties()
     }
   }, [data])
+  
   if(user.user_type === 1){
     return (
     <>

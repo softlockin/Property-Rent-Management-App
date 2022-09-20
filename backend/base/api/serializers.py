@@ -111,7 +111,7 @@ class LoginSerializer(ModelSerializer):
     refresh = serializers.CharField(max_length=555, min_length=3, read_only=True)
 
     class Meta:
-        model = User
+        model = User 
         fields = ['email', 'password', 'access', 'refresh']
 
 class IssueSerializer(ModelSerializer):
@@ -121,9 +121,12 @@ class IssueSerializer(ModelSerializer):
 
 
 class RentInvoiceSerializer(ModelSerializer):
+    paid = serializers.BooleanField(required=True)
+
     class Meta:
         model = RentInvoice
         fields = '__all__'
+
 class GoogleAuthSerializer(serializers.Serializer):
     auth_token = serializers.CharField()
 

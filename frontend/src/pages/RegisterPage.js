@@ -96,9 +96,9 @@ const RegisterPage = () => {
                     backgroundColor: `${values.userType === '1' ? '#e8f4fd' : values.userType === '2' ? '#ecf7ed' : 'transparent'}`,
                     borderColor: `${values.userType === '1' ? '#1976d2' : values.userType === '2' ? '#388e3c' : '#000'}`,
                   }},
-                '& .MuiInputLabel-shrink, &.Mui-focused':{
-                    color: `${values.userType === '1' ? '#1976d2' : values.userType === '2' ? '#388e3c' : '#666666'}`,
-                }
+            '& .MuiInputLabel-shrink, &.Mui-focused':{
+                color: `${values.userType === '1' ? '#1976d2' : values.userType === '2' ? '#388e3c' : '#666666'}`,
+            },
         }
         }   
 
@@ -284,7 +284,7 @@ const RegisterPage = () => {
         justifyContent="space-between"
         alignItems="flex-start"
         >
-            <Box sx={{height: "100vh", width: "82vw", display: "flex", justifyContent: "center", alignItems: "center"}}>
+            <Box sx={{height: "100vh", width: "100vw", display: "flex", justifyContent: "center", alignItems: "center"}}>
                 <Paper elevation={2} sx={{borderRadius:"35px", textAlign:"center", padding:"10px", width:"422px"}}>
                     <Typography
                     sx={{padding:"35px"}}

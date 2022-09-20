@@ -6,6 +6,7 @@ def create_invoice(property_id, owner_id, tenant_id, price, currency, due_day):
         'price': price, 'currency': currency, 'due_day': due_day}
     
     invoice = RentInvoice.objects.create(**invoice_data)
+    invoice.property_name = PropertyItem.objects.get(id=property_id).name
     invoice.save()
 
     return invoice
@@ -17,6 +18,7 @@ def create_issue(name, description):
         'name': name, 'linked_to_property': property_item, 'description': description,
         'closed': False, 'property_owner': property_owner}
     issue = Issue.objects.create(**issue_data)
+    issue.property_name = property_item.name
     issue.save()
 
     return issue

@@ -105,6 +105,7 @@ class PropertyItem(models.Model):
 
 class RentInvoice(models.Model):
     property_id = models.PositiveSmallIntegerField(blank=False)
+    property_name = models.CharField(max_length=30, null=True)
     owner_id = models.PositiveSmallIntegerField(blank=False)
     tenant_id = models.PositiveSmallIntegerField(blank=False)
     price = models.PositiveIntegerField()
@@ -112,10 +113,7 @@ class RentInvoice(models.Model):
     created_at = models.DateField(auto_now_add=True)
     due_day = models.DateField()
     paid = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.id
-
+    
 class Issue(models.Model):
     name = models.CharField(max_length=25, null=False)
     linked_to_property = models.ForeignKey(PropertyItem, on_delete=models.CASCADE)
