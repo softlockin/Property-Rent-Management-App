@@ -97,11 +97,17 @@ class PropertyItem(models.Model):
     address = models.TextField(max_length=256, null=False)
     city = models.TextField(max_length=50, null=False)
     tenant = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='tenant', on_delete=models.CASCADE, null=True, blank=True)
+    tenant_email = models.CharField(max_length=56, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if self.tenant != None:
+            self.tenant_email = User.objects.get(id=self.tenant.id).email
+        super(PropertyItem, self).save(*args, **kwargs)
 
 class RentInvoice(models.Model):
     property_id = models.PositiveSmallIntegerField(blank=False)

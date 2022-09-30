@@ -45,7 +45,7 @@ const HomePage = () => {
           return el.tenant === null;
         }))
     }
-}
+  }
 
   const theme = useTheme()
   const matches = useMediaQuery(theme.breakpoints.up('lg'));

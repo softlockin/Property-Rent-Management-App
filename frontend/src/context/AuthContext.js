@@ -12,7 +12,6 @@ export const AuthProvider = ({children}) => {
     let [userType, setUserType] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(JSON.parse(localStorage.getItem('authTokens')).access)['user_type'] : null)
     let [provider, setProvider] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(JSON.parse(localStorage.getItem('authTokens')).access)['provider'] : null)
     let [gapiUserType, setGapiUserType] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(JSON.parse(localStorage.getItem('authTokens')).access)['gapi_user_type_set'] : null)
-    let [loading, setLoading] = useState(false)
 
     const navigate = useNavigate()
 
@@ -69,10 +68,6 @@ export const AuthProvider = ({children}) => {
             }else{
                 logoutUser()
             }
-
-            if(loading){
-                setLoading(false)
-            }
     }
     }
 
@@ -87,7 +82,19 @@ export const AuthProvider = ({children}) => {
         updateToken:updateToken,
     }
 
+    function checkTokenExp() {
+        let now = Math.round(new Date().getTime() / 1000)
+        let token_exp = jwt_decode(JSON.parse(localStorage.getItem('authTokens')).access)['exp']
+        
+        if(now > token_exp){
+            updateToken()
+        }
+    }
+
     useEffect(() => {
+        if(user){
+            checkTokenExp()
+        }
         if(gapiUserType === false && provider === 'google'){
             navigate('complete-registration')
         }
@@ -100,9 +107,6 @@ export const AuthProvider = ({children}) => {
     }, [user, gapiUserType])
 
     useEffect(()=>{
-        if(loading){
-            updateToken()
-        }
         // let fourDays = 1000*3600*24*4
         let fourMinutes = 1000*60*4
         let interval = setInterval(()=> {
@@ -111,7 +115,7 @@ export const AuthProvider = ({children}) => {
             }
         }, fourMinutes)
         return ()=> clearInterval(interval)
-    }, [authTokens, loading])
+    }, [authTokens])
 
     return(
         <AuthContext.Provider value={contextData} >

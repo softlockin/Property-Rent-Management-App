@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
+import AuthContext from '../context/AuthContext'
 import jwt_decode from "jwt-decode"
 import { useParams, useNavigate} from 'react-router-dom'
 import { Alert, Paper, Stack, Typography, Box, Grid , useTheme} from '@mui/material';
@@ -7,7 +8,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 const AccountLinkingPage = (props) => {
 
     let { token } = useParams()
-
+    const {authTokens} = useContext(AuthContext)
     const navigate = useNavigate()
     const theme = useTheme()
     const matches = useMediaQuery(theme.breakpoints.up('lg'));
@@ -24,7 +25,8 @@ const AccountLinkingPage = (props) => {
             let response = await fetch(`http://127.0.0.1:8000/api/accept-request/?token=`+token, {
                 method: 'GET',
                 headers:{
-                    'Content-Type':'application/json'
+                    'Content-Type':'application/json',
+                    'Authorization':'Bearer ' + String(authTokens.access)
                 },
             })
             let data = await response.json()

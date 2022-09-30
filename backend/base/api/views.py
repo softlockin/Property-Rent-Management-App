@@ -152,11 +152,11 @@ class AcceptLinkUserToPropertyRequestAPIView(APIView):
                     user = User.objects.get(email=payload['user_link_data']['email'])
                     if user.user_type == 1:
                         return Response({'error': 'User not valid!'}, status=status.HTTP_400_BAD_REQUEST)
-                    if property_item.tenant_id != None:
+                    if property_item.tenant != None:
                         return Response({'error': 'Property already has a tenant!'}, status=status.HTTP_400_BAD_REQUEST)
                     serializer = self.serializer_class(data=payload['user_link_data'])
                     if serializer.is_valid():
-                        property_item.tenant_id = user.id
+                        property_item.tenant = user
                         property_item.rent_due_day = payload['user_link_data']['due_day']
                         property_item.save()
                         return Response({'message': 'Success!', 'address': f'{property_item.address}, {property_item.city}', 'price': f'{property_item.price}', 'due_day': property_item.rent_due_day}, status=status.HTTP_200_OK)
