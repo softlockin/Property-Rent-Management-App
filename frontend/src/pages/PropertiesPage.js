@@ -7,13 +7,17 @@ import PageHeading from '../components/static/PageHeading';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import PropertiesList from '../components/properties/PropertiesList';
 import AddPropertyModal from '../components/properties/AddPropertyModal';
+import EditPropertyModal from '../components/properties/EditPropertyModal';
 
-const PropertiesPage = (props) => {
+const PropertiesPage = () => {
 
     const theme = useTheme()
     const {authTokens, user} = useContext(AuthContext)
     const [properties, setProperties] = useState([])
     const [modalOpen, setModalOpen] = useState(false)
+    const [editModalOpen, setEditModalOpen] = useState(false)
+    const [refreshList, setRefreshList] = useState(false)
+    const [selectedProperty, setSelectedProperty] = useState(null)
     const [snackbar, setSnackbar] = useState({
         open: false,
         type: 'warning',
@@ -55,14 +59,28 @@ const PropertiesPage = (props) => {
 
     useEffect(()=>{
         if(user.user_type === 1){
-          fetchProperties()
+            let isCancelled = false;
+            if(!isCancelled){
+                fetchProperties()
+            }
+            return () => {
+                isCancelled = true
+            } 
         }
     }, [])
+
+    useEffect(()=>{
+        if(refreshList === true){
+            fetchProperties()
+            setRefreshList(false)
+        }
+    }, [refreshList])
     
 
     return (
         <>
             <AddPropertyModal authTokens={authTokens} setProperties={setProperties} setModalOpen={setModalOpen} modalOpen={modalOpen} setSnackbar={setSnackbar} />
+            <EditPropertyModal editModalOpen={editModalOpen} setEditModalOpen={setEditModalOpen} data={selectedProperty} authTokens={authTokens} setRefreshList={setRefreshList} setSnackbar={setSnackbar}/>
             <Box 
             sx={styles.container}
             >
@@ -94,29 +112,29 @@ const PropertiesPage = (props) => {
                     Add property
                     </Button>
                     <Paper elevation={3} sx={{width: "100%", minHeight: "380px", maxHeight: "85vh", borderRadius: "10px", "&.MuiPaper-root": {marginLeft: "0px"}}}>
-                        <Grid2 container spacing={1} sx={{width: "100%", margin: "10px 10px 10px 10px"}}>
-                            <Grid2 xs={4}>
-                                <Typography variant="subtitle2" sx={{color: "#02143d", fontWeight: "600"}}>
+                        <Grid2 container spacing={1} sx={{width: "100%"}}>
+                            <Grid2 xs={3}>
+                                <Typography variant="subtitle2" sx={{color: "#02143d", fontWeight: "600", padding: "10px 0px 10px 20px"}}>
                                     Name
                                 </Typography>
                             </Grid2>
                             <Grid2 xs={3}>
-                                <Typography variant="subtitle2" sx={{color: "#02143d", fontWeight: "600"}}>
+                                <Typography variant="subtitle2" sx={{color: "#02143d", fontWeight: "600", padding: "10px 0px 10px 10px"}}>
                                     Address
                                 </Typography>
                             </Grid2>
-                            <Grid2 xs={1.5}>
-                                <Typography variant="subtitle2" sx={{color: "#02143d", fontWeight: "600"}}>
+                            <Grid2 xs={2}>
+                                <Typography variant="subtitle2" sx={{color: "#02143d", fontWeight: "600", padding: "10px 0px 10px 10px"}}>
                                     Status
                                 </Typography>
                             </Grid2>
-                            <Grid2 xs={2.5}>
-                                <Typography variant="subtitle2" sx={{color: "#02143d", fontWeight: "600"}}>
+                            <Grid2 xs={3}>
+                                <Typography variant="subtitle2" sx={{color: "#02143d", fontWeight: "600", padding: "10px 0px 10px 10px"}}>
                                     Tenant
                                 </Typography>
                             </Grid2>
                             <Grid2 xs={1}>
-                                <Typography variant="subtitle2" sx={{color: "#02143d", fontWeight: "600"}}>
+                                <Typography variant="subtitle2" sx={{color: "#02143d", fontWeight: "600", padding: "10px 0px 10px 10px"}}>
                                     Rent
                                 </Typography>
                             </Grid2>
@@ -126,14 +144,14 @@ const PropertiesPage = (props) => {
                         width: "0px",
                         background: "transparent",
                         }}}>
-                        {
-                        properties.length === 0 ?
-                        <Typography variant="body1" sx={{color: "#7d7d7d", fontStyle: "italic", display: "flex", alignItems: "center", justifyContent: "center", marginTop: "155px"}}>
-                            No properties to be listed.
-                        </Typography> 
-                        :
-                        <PropertiesList data={properties} />
-                        }
+                            {
+                            properties.length === 0 ?
+                            <Typography variant="body1" sx={{color: "#7d7d7d", fontStyle: "italic", display: "flex", alignItems: "center", justifyContent: "center", marginTop: "155px"}}>
+                                No properties to be listed.
+                            </Typography> 
+                            :
+                            <PropertiesList data={properties} setEditModalOpen={setEditModalOpen} setSelectedProperty={setSelectedProperty} />
+                            }
                         </Box>
                     </Paper>
                 </Stack>

@@ -95,7 +95,10 @@ const LatestInvoices = () => {
     }
 
     useEffect(()=>{
-        fetchRecentInvoices()
+        fetchRecentInvoices();
+        return () => {
+            setInvoice([]);
+        };
     }, [])
 
   return (

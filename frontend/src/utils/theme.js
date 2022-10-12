@@ -49,6 +49,7 @@ export const theme = createTheme({
               // border: "1px solid #feda00",
               // color: "#000",
               boxShadow: "0 0 0",
+              transitionDuration: "0s !important",
               '&:hover': {
                   // backgroundColor: '#fff',
                   // color: '#000',

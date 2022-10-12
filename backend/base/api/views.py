@@ -98,10 +98,15 @@ class PropertyAPIView(APIView):
         user = request.user
         property_item = self.get_object(pk)
         if property_item.owner.id == user.id:
+            owner_summary = OwnerSummary.objects.get(user_id=user.id)
+            open_issues = property_item.issue_set.all().filter(closed=False)
+            owner_summary.properties_listed = F('properties_listed') - 1
+            owner_summary.open_issues = F('open_issues') - len(open_issues)
+            owner_summary.save()
             property_item.delete()
-            return Response("Property was deleted")
+            return Response({"message": "Property was deleted."}, status=status.HTTP_200_OK)
         else:
-            return Response("You are not authorized to delete this property!", status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"message": "You are not the owner of this property."}, status=status.HTTP_401_UNAUTHORIZED)
 
 @permission_classes([IsAuthenticated])
 class LinkUserToPropertyRequestAPIView(APIView):
@@ -131,7 +136,7 @@ class LinkUserToPropertyRequestAPIView(APIView):
                     'due_day': data['due_day']}
 
                     Util.SendDynamic(data)
-                    return Response({'message': 'Email sent!'}, status=status.HTTP_200_OK)
+                    return Response({'message': f"Email was sent to {user.email}!"}, status=status.HTTP_200_OK)
             except:
                 return Response({'error': 'User does not exist!'}, status=status.HTTP_404_NOT_FOUND)
         except:

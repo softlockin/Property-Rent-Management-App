@@ -11,6 +11,7 @@ import PageHeading from '../components/static/PageHeading';
 const IssueTrackerPage = () => {
 
   const theme = useTheme()
+  const [data, setData] = useState([])
   const styles = {
     container: {
         width: "85vw", 
@@ -24,6 +25,10 @@ const IssueTrackerPage = () => {
         }
     }
   }
+
+  useEffect(() => {
+    console.log('test')
+  }, [data])
 
 
   return (

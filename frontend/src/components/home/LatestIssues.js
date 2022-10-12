@@ -12,7 +12,6 @@ const LatestIssues = () => {
     const matches = useMediaQuery(theme.breakpoints.up('lg'))
     const navigate = useNavigate()
     const [issue, setIssue] = useState([])
-    const [renderIssue, setRenderIssue] = useState(false)
 
     const styles = {
         issuePill: {
@@ -76,7 +75,7 @@ const LatestIssues = () => {
     }
 
     useEffect(()=>{
-        fetchRecentIssues()
+        fetchRecentIssues();
     }, [])
 
   return (

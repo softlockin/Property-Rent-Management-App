@@ -66,13 +66,19 @@ const HomePage = () => {
   useEffect(()=>{
     if(user.user_type === 1){
       fetchSummary()
-    }
+    };
+    return () => {
+      setData({});
+    };
   }, [])
 
   useEffect(()=>{
     if(user.user_type === 1){
       fetchProperties()
-    }
+    };
+    return () => {
+      setProperties([]);
+    };
   }, [data])
   
   if(user.user_type === 1){
