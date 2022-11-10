@@ -15,8 +15,8 @@ from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken, Token
-from .serializers import AcceptLinkUserToPropertySerializer, LinkUserToPropertyRequestSerializer, SummaryFetchSerializer, PasswordResetSerializer, SetTypeAfterGapiLogin, ForgotPasswordSerializer, MyTokenObtainPairSerializer, RegisterSerializer, EmailVerificationSerializer, LoginSerializer, PropertyListSerializer, PropertySerializer, GoogleAuthSerializer, RentInvoiceSerializer, IssueSerializer
-from base.models import User, PropertyItem, OwnerSummary, RentInvoice, Issue
+from .serializers import AcceptLinkUserToPropertySerializer, IssueMessageSerializer, LinkUserToPropertyRequestSerializer, SummaryFetchSerializer, PasswordResetSerializer, SetTypeAfterGapiLogin, ForgotPasswordSerializer, MyTokenObtainPairSerializer, RegisterSerializer, EmailVerificationSerializer, LoginSerializer, PropertyListSerializer, PropertySerializer, GoogleAuthSerializer, RentInvoiceSerializer, IssueSerializer
+from base.models import User, PropertyItem, OwnerSummary, RentInvoice, Issue, IssueMessage
 from .permissions import IsTenantPermission
 from .utils import Util
 from .owner_summary_creation import create_summary
@@ -104,7 +104,7 @@ class PropertyAPIView(APIView):
             owner_summary.open_issues = F('open_issues') - len(open_issues)
             owner_summary.save()
             property_item.delete()
-            return Response({"message": "Property was deleted."}, status=status.HTTP_200_OK)
+            return Response({"message": "Property has been deleted."}, status=status.HTTP_200_OK)
         else:
             return Response({"message": "You are not the owner of this property."}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -293,12 +293,61 @@ class IssueAPIView(APIView):
                 return Response({'error': 'You are not a tenant at this property.'}, status=status.HTTP_401_UNAUTHORIZED)
             except:
                 return Response({'error': 'Property data error.'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    def put(self, request):
+
+@permission_classes([IsAuthenticated])
+class IssueMessageAPIView(APIView):
+    serializer_class = IssueMessageSerializer
+    def get(self, request, pk):
+        user = request.user
+        issue = Issue.objects.get(id=pk)
+        if user.user_type == 2:
+            if issue.created_by.id == user.id:
+                messages = issue.issuemessage_set.all()
+                serializer = self.serializer_class(messages, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({'error': 'Not authorized.'}, status=status.HTTP_401_UNAUTHORIZED)
+        if user.user_type == 1:
+            if issue.property_owner.id == user.id:
+                messages = issue.issuemessage_set.all()
+                serializer = self.serializer_class(messages, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({'error': 'Not authorized.'}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({'error': 'Something went wrong.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request, pk):
+        user = request.user
+        data = request.data
+        data['created_by'] = user.id
+        data['user_type'] = user.user_type
+        data['linked_to_issue'] = pk
+        serializer = self.serializer_class(data=data)
+        if serializer.is_valid():
+            issue = Issue.objects.get(id=pk)
+            if user.user_type == 1:
+                if user.id == issue.property_owner.id:
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response({'error': 'You are not the property owner!'}, status=status.HTTP_401_UNAUTHORIZED)
+            if user.user_type == 2:
+                if user.id == issue.created_by.id:
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response({'error': 'The issue was opened by someone else!'}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@permission_classes([IsAuthenticated])
+class EditIssueAPIView(APIView):
+    def get_object(self, pk):
+        try:
+            return Issue.objects.get(pk=pk)
+        except:
+            return Response({'error': 'Issue does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+
+    def put(self, request, pk):
         user = request.user
         data = request.data
         try:
-            issue = Issue.objects.get(id=data['id'])
+            issue = self.get_object(pk)
             if(issue.closed == False):
                 if issue.property_owner_id == user.id:
                     serializer = IssueSerializer(instance=issue, data=request.data, partial=True)
@@ -315,7 +364,7 @@ class IssueAPIView(APIView):
                 return Response({'error': 'Only the owner can close the issue.'}, status=status.HTTP_401_UNAUTHORIZED)
             return Response({'error': 'Issue is already closed.'}, status=status.HTTP_403_FORBIDDEN)
         except:
-            return Response({'error': 'Issue not found.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Issue not found.'}, status=status.HTTP_404_NOT_FOUND)
 
 class RegisterAPIView(GenericAPIView):
     serializer_class = RegisterSerializer

@@ -14,6 +14,7 @@ const TenantInvite = ({properties}) => {
     const dueDayInfo = "If day is not valid when the invoice is generated, the last valid day of the month will be auto-selected."
     const theme = useTheme()
     const matches = useMediaQuery(theme.breakpoints.up('lg'))
+    const switchMobile = useMediaQuery(theme.breakpoints.down('sm'))
     const [loading, setLoading] = useState(false)
     const {authTokens} = useContext(AuthContext)
     const [selectedProperty, setSelectedProperty] = useState(null)
@@ -62,7 +63,7 @@ const TenantInvite = ({properties}) => {
                 height: "0px",
             }
         },
-        selectField: {
+        selectField: !switchMobile ? {
             marginTop: "17px", 
             marginBottom: "9px",
             marginRight: "17px",
@@ -71,10 +72,31 @@ const TenantInvite = ({properties}) => {
             paddingLeft: "12px",
             width: "200px",
             overflow: "hidden"
-        },
-        errorSelectField: {
+        } :
+        {
+            marginTop: "0px", 
+            marginBottom: "0px",
+            marginRight: "0px",
+            border: "1px solid #e2e2e1", 
+            borderRadius: "10px", 
+            paddingLeft: "12px",
+            width: "200px",
+            overflow: "hidden"
+        }
+        ,
+        errorSelectField: !switchMobile ?{
             marginTop: "17px", 
             marginBottom: "9px",
+            border: "1px solid #d32f2f", 
+            borderRadius: "10px", 
+            paddingLeft: "12px",
+            '&.MuiInput-root': {
+                marginBottom: '0'
+            }
+        }:
+        {
+            marginTop: "0px", 
+            marginBottom: "0px",
             border: "1px solid #d32f2f", 
             borderRadius: "10px", 
             paddingLeft: "12px",
@@ -217,6 +239,102 @@ const TenantInvite = ({properties}) => {
                             An email for tenant's confirmation will be sent.
                         </Typography>
                     </Grid2>
+                    {switchMobile ?
+                    <>
+                    <Grid2 xs={3.5} sx={{display: "flex", justifyContent: "flex-start", alignItems: "center"}}>
+                        <Typography variant="subtitle2" sx={{color: "#02143d"}}>
+                            Property
+                        </Typography>
+                    </Grid2>
+                    <Grid2 xs={8.5} sx={{"& .MuiFormControl-root": {margin: "0px"}}}>
+                        <FormControl error>
+                            <Select
+                                name="property_id"
+                                disableUnderline
+                                value={inputFields['property_id']}
+                                displayEmpty
+                                variant="standard"
+                                fullWidth
+                                onChange={(e) => {
+                                    setInputFields(prev => ({...prev, property_id: e.target.value }));
+                                    setSelectedProperty(properties.length>0 ? (e.target.value!=='' ? properties.filter((property)=>{return property.id === e.target.value}) : null) : null)
+                                }}
+                                sx={errors.property['raised'] ? styles.errorSelectField : styles.selectField}
+                            >
+                                {(()=>{
+                                    let elems = properties.length>0 ? properties.map( (item, index) => {return <MenuItem key={index+1} value={item.id}>{item.name}</MenuItem>}) : []
+                                    elems.unshift(<MenuItem key="0" value=''><em>Select a property</em></MenuItem>)
+                                    return elems;
+                                })()}
+                            </Select>
+                            {errors.property['raised'] ? <FormHelperText>{errors.property['message']}</FormHelperText> : null}
+                        </FormControl>
+                    </Grid2>
+                    <Grid2 xs={12} >
+                        <>
+                            <Typography variant="caption" sx={{color: "#7d7d7d"}}>
+                                Address: {selectedProperty ? (selectedProperty[0].address +", " + selectedProperty[0].city) : null}
+                            </Typography>
+                        
+                        {<br />}
+                        <Typography variant="caption" sx={{color: "#7d7d7d"}}>
+                            Rent: {selectedProperty ? (selectedProperty[0].price + (selectedProperty[0].currency === 1 ? " EUR" : " LEI")) : null}
+                        </Typography>
+                        </>
+                    </Grid2>
+                    <Grid2 xs={3.5} sx={{display: "flex", justifyContent: "flex-start", alignItems: "center"}}>
+                        <Typography variant="subtitle2" sx={{color: "#02143d"}}>
+                            Tenant's email
+                        </Typography>
+                    </Grid2>
+                    <Grid2 xs={8.5} sx={{"& .MuiFormControl-root": {margin: "0px"}}}>
+                        <TextField
+                            InputProps={{ disableUnderline: true }}
+                            name="email"
+                            type="text"
+                            variant="filled"
+                            hiddenLabel
+                            placeholder="Email"
+                            fullWidth
+                            margin="normal"
+                            value={inputFields.email}
+                            onChange={(e) => setInputFields(prev => ({
+                                ...prev,
+                                email: e.target.value
+                            }))}
+                            error={errors.email['raised']}
+                            sx={errors.email['raised'] ? styles.errorTextField : styles.textField}
+                            helperText={errors.email['message']}
+                            />
+                    </Grid2>
+                    <Grid2 xs={3.5} sx={{display: "flex", justifyContent: "flex-start", alignItems: "center"}}>
+                        <Typography variant="subtitle2" sx={{color: "#02143d"}}>
+                            Due day
+                        </Typography>
+                    </Grid2>
+                    <Grid2 xs={8.5} sx={{"& .MuiFormControl-root": {margin: "0px"}}}>
+                        <Select
+                            name="due_day"
+                            disableUnderline
+                            defaultValue={1}
+                            variant="standard"
+                            onChange={(e) => setInputFields(prev => ({...prev, due_day: e.target.value }))}
+                            sx={{border: "1px solid #e2e2e1", borderRadius: "10px", paddingLeft: "12px"}}
+                        >
+                            {(() => {
+                                let days = [];
+                                for(let i=1;i<=31;i++){
+                                    days.push(<MenuItem key={i} value={i}>{i}</MenuItem>)
+                                };
+                                return days;
+                            })()
+                            }
+                            
+                        </Select>
+                    </Grid2>
+                    </>
+                    :
+                    <>
                     <Grid2 sm={5}>
                         <Typography variant="subtitle2" sx={{color: "#02143d"}}>
                             Property
@@ -293,7 +411,6 @@ const TenantInvite = ({properties}) => {
                             
                         </Select>
                     </Grid2>
-                
                     <Grid2 sm={12} >
                         <>
                             <Typography variant="caption" sx={{color: "#7d7d7d"}}>
@@ -306,6 +423,8 @@ const TenantInvite = ({properties}) => {
                         </Typography>
                         </>
                     </Grid2>
+                    </>
+                }
                 </Grid2>
                 <LoadingButton
                     type="submit"

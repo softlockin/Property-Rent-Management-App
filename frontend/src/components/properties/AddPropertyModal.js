@@ -63,7 +63,10 @@ const AddPropertyModal = (props) => {
             boxShadow: 24,
             p: 4,
             outline: 'none',
-            padding: "0"
+            padding: "0",
+            [theme.breakpoints.down('bsx')]: {
+                width: "95%",
+            }
         },
         textField:{
             '& .MuiFilledInput-root': {
@@ -267,7 +270,7 @@ const AddPropertyModal = (props) => {
             </Typography>
             <form noValidate autoComplete='off' onSubmit={handleSubmit}>
             <Box sx={{backgroundColor: "#f2f2f2", padding: "20px"}}> 
-                <Grid container spacing={2} sx={{width: "100%", margin: "0", padding: "0"}}>
+                <Grid container spacing={0} sx={{width: "100%", margin: "0", padding: "0"}}>
                     <Grid item sm={12}>
                         <Typography variant="body2" sx={{color: "#7d7d7d"}}>
                             Enter the details of the property you want to add.

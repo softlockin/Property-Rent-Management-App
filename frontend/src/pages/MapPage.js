@@ -8,7 +8,7 @@ import AuthContext from '../context/AuthContext'
 import { TypographyListItem } from '../components/custom/TypographyListItem';
 import PageHeading from '../components/static/PageHeading';
 
-const MapPage = () => {
+const MapPage = ({ setMobileViewNavTitle }) => {
 
   const theme = useTheme()
   const styles = {
@@ -24,6 +24,10 @@ const MapPage = () => {
         }
     }
   }
+
+  useEffect(()=>{
+    setMobileViewNavTitle("Map")
+  }, [])
 
   return (
     <Box 

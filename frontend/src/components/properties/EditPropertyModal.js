@@ -2,6 +2,7 @@ import { Box, Button, Tooltip, Divider, Modal, Stack, TextField, Typography, use
 import Grid2 from "@mui/material/Unstable_Grid2";
 import { LoadingButton } from '@mui/lab';
 import BorderColorRoundedIcon from '@mui/icons-material/BorderColorRounded';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import LinkRoundedIcon from '@mui/icons-material/LinkRounded';
 import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import React, { useEffect, useState } from 'react'
@@ -55,6 +56,7 @@ const EditPropertyModal = (props) => {
             transform: 'translate(-50%, -50%)',
             width: "80%",
             maxWidth: "700px",
+            [theme.breakpoints.down('sm')]: {maxWidth: "auto", width: "98vw"},
             bgcolor: 'background.paper',
             borderRadius: '7px',
             boxShadow: 24,
@@ -79,7 +81,8 @@ const EditPropertyModal = (props) => {
                 width: "100%",
             },
             '& .MuiFormControl-root, &.MuiTextField-root': {
-                width: "70%"
+                width: "70%",
+                [theme.breakpoints.down('sm')]: {width: "90%"}
             }
         },
         errorTextField: {
@@ -94,7 +97,8 @@ const EditPropertyModal = (props) => {
                 width: "100%"
             },
             '& .MuiFormControl-root, &.MuiTextField-root': {
-                width: "70%"
+                width: "70%",
+                [theme.breakpoints.down('sm')]: {width: "90%"}
             } 
         },
     }
@@ -383,14 +387,20 @@ const EditPropertyModal = (props) => {
         open={props.editModalOpen}
     >
         <Box sx={styles.modal}>
-            <Box sx={{display: "flex", flexDirection: "column", alignItems: "flex-start"}}>
-                <Typography variant="h5" sx={{color: "#02143d", fontWeight: "600", margin: "10px 0 10px 10px"}}>
-                    {props.data?.name}
-                </Typography>
-                <Typography variant="body2" sx={{color: "#7d7d7d", fontStyle: "italic", marginLeft: "10px"}}>
-                    {props.data?.address}
-                </Typography>
+            <Box sx={{display: "flex", flexDirection: "row", alignItems: "flex-start", width: "100%"}}>
+                <Box sx={{width: "90%"}}>
+                    <Typography variant="h5" sx={{color: "#02143d", fontWeight: "600", margin: "10px 0 10px 10px"}}>
+                        {props.data?.name}
+                    </Typography>
+                    <Typography variant="body2" sx={{color: "#7d7d7d", fontStyle: "italic", marginLeft: "10px"}}>
+                        {props.data?.address}
+                    </Typography> 
+                </Box>
+                <Box sx={{width: "10%", display: "flex", justifyContent: "flex-end", alignItems: "flex-end", margin: "5px"}}>
+                    <CloseRoundedIcon onClick={()=>{handleClose()}} sx={{color: "#7d7d7d", "&:hover": {color: "black", cursor: "pointer"}}}/>
+                </Box>
             </Box>
+            
             <form noValidate autoComplete='off' onSubmit={handleSubmit}>
             <Box sx={{backgroundColor: "#f2f2f2"}}>
             <Stack
@@ -405,13 +415,13 @@ const EditPropertyModal = (props) => {
                 >
                     <Grid2
                         xs={3}
-                        sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", backgroundColor: "#fff" }}
+                        sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", backgroundColor: "#fff", [theme.breakpoints.down('bss')]: {display: "none"} }}
                     >
                         <BorderColorRoundedIcon sx={{fontSize: "75px", color: `${theme.palette.primary.main}4D`, margin: "10px 0 10px 0"}} />
                     </Grid2>
                     <Grid2
                         xs={9}
-                        sx={{display: "flex", justifyContent: "center", alignItems: "center"}}
+                        sx={{display: "flex", justifyContent: "center", alignItems: "center", [theme.breakpoints.down('bss')]: {width: "100%"}}}
                     >
                         <Grid2
                             container
@@ -490,13 +500,13 @@ const EditPropertyModal = (props) => {
                 >
                     <Grid2
                     xs={3}
-                    sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", backgroundColor: "#fff" }}
+                    sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", backgroundColor: "#fff", [theme.breakpoints.down('bss')]: {display: "none"} }}
                 >
                         <LinkRoundedIcon sx={{fontSize: "75px", color: `${theme.palette.primary.main}4D`, margin: "10px 0 10px 0"}} />
                     </Grid2>
                     <Grid2
                         xs={9}
-                        sx={{display: "flex", justifyContent: "center", alignItems: "center"}}
+                        sx={{display: "flex", justifyContent: "center", alignItems: "center", [theme.breakpoints.down('bss')]: {width: "100%"}}}
                     >
                         {tenant === null ? 
                         <Grid2
@@ -601,9 +611,6 @@ const EditPropertyModal = (props) => {
                     }
                 </Box>
                 <Box sx={{display: "flex", justifyContent: "center"}}>
-                    <Button onClick={()=>{handleClose()}} size="small" variant="outlined" sx={{color: "#7d7d7d", border: "1px solid #7d7d7d", "&:hover": {border: "1px solid #7d7d7d", backgroundColor: "unset"}}}>
-                        Close
-                    </Button>
                     <LoadingButton
                     type="submit"
                     disabled={!(props.data?.name !== inputFields.name || props.data?.currency !== inputFields.currency || props.data?.price.toString() !== inputFields.price)}

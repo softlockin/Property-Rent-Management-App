@@ -2,6 +2,7 @@ import { Button, Divider, Stack, Typography, useTheme } from '@mui/material';
 import Grid2 from '@mui/material/Unstable_Grid2';
 import AuthContext from '../../context/AuthContext'
 import useMediaQuery from '@mui/material/useMediaQuery';
+import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from 'react-router-dom';
 import React, { useEffect, useState, useContext } from 'react';
 
@@ -11,6 +12,8 @@ const LatestIssues = () => {
     const theme = useTheme()
     const matches = useMediaQuery(theme.breakpoints.up('lg'))
     const navigate = useNavigate()
+    const [fetchError, setFetchError] = useState(false)
+    const [loaded, setLoaded] = useState(false)
     const [issue, setIssue] = useState([])
 
     const styles = {
@@ -35,12 +38,12 @@ const LatestIssues = () => {
     function IssueItem({p, d, c, t}) {
         return(
             <Grid2 container sx={{width: "100%"}}>
-                <Grid2 xs={4}>
+                <Grid2 xs={5}>
                     <Typography variant="body1" sx={{color: "#02143d"}}>
                         {p}
                     </Typography>
                 </Grid2>
-                <Grid2 display="flex" justifyContent="flex-start" alignItems="center" xs={6}>
+                <Grid2 display="flex" justifyContent="flex-start" alignItems="center" xs={5}>
                     <Typography variant="body2" sx={{color: "#02143d"}}>
                         {d}
                     </Typography>
@@ -71,6 +74,9 @@ const LatestIssues = () => {
   
         if(response.status === 200){
             setIssue(data)
+            setLoaded(true)
+        }else{
+            setFetchError(true)
         }
     }
 
@@ -89,8 +95,13 @@ const LatestIssues = () => {
             Latest open issues
         </Typography>
         <Divider sx={{width:"100%", borderBottomWidth: "1px", marginTop: "10px", marginBottom: "10px", backgroundColor: "#cdcbcb"}} />
-        {
-        issue.length === 0 ?
+        {fetchError ? 
+        <Typography variant="subtitle2" sx={{color: "#d32f2f", marginTop: "10px"}}>
+            Something went wrong while loading data. Refresh page!
+        </Typography>
+        :
+        loaded ? 
+        (issue.length === 0 ?
             <Typography variant="caption" ml={1} sx={{color: "#7d7d7d"}}>
                 There are no recent issues
             </Typography>
@@ -99,13 +110,15 @@ const LatestIssues = () => {
                 <IssueItem key={item.id} p={item.property_name} d={item.name} c={item.closed} t={item.created_at}/>
                 )
             )
+        ):
+        <CircularProgress size="30px" sx={{marginTop: "10px"}} />
         }
         <Button
             onClick={() => {navigate('issue-tracker')}}
             variant="outlined"
             elevation={0}
             size="small"
-            sx={{margin: "20px 0 25px", boxShadow:"0"}}
+            sx={{marginTop: "20px", boxShadow:"0"}}
         >
             View all issues
         </Button>

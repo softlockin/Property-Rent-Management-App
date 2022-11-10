@@ -10,6 +10,7 @@ const QuickAdd = (props) => {
 
     const theme = useTheme()
     const matches = useMediaQuery(theme.breakpoints.up('lg'))
+    const switchMobile = useMediaQuery(theme.breakpoints.down('sm'))
     const {authTokens} = useContext(AuthContext)
     const [loading, setLoading] = useState(false)
     const [snackbar, setSnackbar] = useState({
@@ -267,12 +268,159 @@ const QuickAdd = (props) => {
                 Add property
             </Typography>
             <form noValidate autoComplete='off' onSubmit={handleSubmit}>
-                <Grid container spacing={2} sx={{width: "100%", padding: "25px"}}>
-                    <Grid item sm={12}>
+                <Grid container spacing={1} sx={{width: "100%", padding: "25px"}}>
+                    <Grid item xs={12}>
                         <Typography variant="body2" sx={{color: "#7d7d7d"}}>
                             Enter the details of the property you want to add.
                         </Typography>
                     </Grid>
+                    {switchMobile ?
+                    <>
+                    <Grid item xs={2.5} sx={{display: "flex", justifyContent: "flex-start", alignItems: "center"}}>
+                        <Typography variant="subtitle2" sx={{color: "#02143d"}}>
+                            Name
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={9.5} sx={{"& .MuiFormControl-root": {margin: "0px"}}}>
+                        <TextField
+                            InputProps={{ disableUnderline: true }}
+                            name="name"
+                            type="text"
+                            variant="filled"
+                            hiddenLabel
+                            placeholder='E.g. "Apartament Mihai Bravu"'
+                            fullWidth
+                            margin="normal"
+                            value={inputFields.name}
+                            onChange={(e) => setInputFields(prev => ({
+                                ...prev,
+                                name: e.target.value
+                            }))}
+                            error={errors.name['raised']}
+                            sx={errors.name['raised'] ? styles.errorTextField : styles.textField}
+                            helperText={errors.name['message']}
+                            />
+                    </Grid>
+                    <Grid item xs={2.5} sx={{display: "flex", justifyContent: "flex-start", alignItems: "center"}}>
+                        <Typography variant="subtitle2" sx={{color: "#02143d"}}>
+                            Rent
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={3.5} sx={{"& .MuiFormControl-root": {margin: "0px"}}}>
+                        <TextField
+                            InputProps={{ disableUnderline: true }}
+                            name="price"
+                            type="text"
+                            variant="filled"
+                            hiddenLabel
+                            placeholder="0.00"
+                            fullWidth
+                            margin="normal"
+                            value={inputFields.price}
+                            onChange={(e) => setInputFields(prev => ({
+                                ...prev,
+                                price: e.target.value
+                            }))}
+                            error={errors.price['raised']}
+                            sx={errors.price['raised'] ? styles.errorTextField : styles.textField}
+                            helperText={errors.price['message']}
+                            />
+                    </Grid>
+                    <Grid item xs={3.5} sx={{display: "flex", justifyContent: "flex-start", alignItems: "center"}}>
+                        <Typography variant="subtitle2" sx={{color: "#02143d"}}>
+                            Currency
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={2.5} sx={{"& .MuiFormControl-root": {margin: "0px"}}}>
+                        <Select
+                            name="currency"
+                            disableUnderline
+                            defaultValue={2}
+                            variant="standard"
+                            onChange={(e) => setInputFields(prev => ({...prev, currency: e.target.value }))}
+                        >
+                            <MenuItem value={1}>EUR</MenuItem>
+                            <MenuItem value={2}>LEI</MenuItem>
+                        </Select>
+                    </Grid>
+                    <Grid item xs={2.5} sx={{display: "flex", justifyContent: "flex-start", alignItems: "center"}}>
+                        <Typography variant="subtitle2" sx={{color: "#02143d"}}>
+                            Street
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={9.5} sx={{"& .MuiFormControl-root": {margin: "0px"}}}>
+                        <TextField
+                            InputProps={{ disableUnderline: true }}
+                            name="street"
+                            type="text"
+                            variant="filled"
+                            hiddenLabel
+                            placeholder="Street"
+                            fullWidth
+                            margin="normal"
+                            value={inputFields.street}
+                            onChange={(e) => setInputFields(prev => ({
+                                ...prev,
+                                street: e.target.value
+                            }))}
+                            error={errors.street['raised']}
+                            sx={errors.street['raised'] ? styles.errorTextField : styles.textField}
+                            helperText={errors.street['message']}
+                            />
+                    </Grid>
+                    <Grid item xs={2.5} sx={{display: "flex", justifyContent: "flex-start", alignItems: "center"}}>
+                        <Typography variant="subtitle2" sx={{color: "#02143d"}}>
+                            Number
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={9.5} sx={{"& .MuiFormControl-root": {margin: "0px"}}}>
+                        <TextField
+                            InputProps={{ disableUnderline: true }}
+                            name="number"
+                            type="text"
+                            variant="filled"
+                            hiddenLabel
+                            placeholder="Number"
+                            fullWidth
+                            margin="normal"
+                            value={inputFields.number}
+                            onChange={(e) => setInputFields(prev => ({
+                                ...prev,
+                                number: e.target.value
+                            }))}
+                            error={errors.number['raised']}
+                            sx={errors.number['raised'] ? styles.errorTextField : styles.textField}
+                            helperText={errors.number['message']}
+                            />
+                    </Grid>
+                    <Grid item xs={2.5} sx={{display: "flex", justifyContent: "flex-start", alignItems: "center"}}>
+                        <Typography variant="subtitle2" sx={{color: "#02143d"}}>
+                            City
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={9.5} sx={{"& .MuiFormControl-root": {margin: "0px"}}}>
+                        <TextField
+                            error={errors.city['raised']}
+                            InputProps={{ disableUnderline: true }}
+                            name="city"
+                            type="text"
+                            variant="filled"
+                            hiddenLabel
+                            placeholder="City"
+                            fullWidth
+                            margin="normal"
+                            value={inputFields.city}
+                            onChange={(e) => setInputFields(prev => ({
+                                ...prev,
+                                city: e.target.value
+                            }))}
+                            sx={errors.city['raised'] ? styles.errorTextField : styles.textField}
+                            helperText={errors.city['message']}
+                            />
+                    </Grid>
+                    </>
+                    :
+                    <>
                     <Grid item sm={7}>
                         <Typography variant="subtitle2" sx={{color: "#02143d"}}>
                             Name
@@ -404,6 +552,8 @@ const QuickAdd = (props) => {
                             helperText={errors.city['message']}
                             />
                     </Grid>
+                    </>
+                    }
                 </Grid>
                 <LoadingButton
                     type="submit"

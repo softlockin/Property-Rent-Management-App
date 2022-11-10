@@ -10,9 +10,11 @@ import LatestIssues from '../components/home/LatestIssues';
 import LatestInvoices from '../components/home/LatestInvoices';
 
 
-const HomePage = () => {
+const HomePage = ({ setMobileViewNavTitle }) => {
   const {authTokens, user} = useContext(AuthContext)
   const [data, setData] = useState({})
+  const [summaryLoaded, setSummaryLoaded] = useState(false)
+  const [fetchSummaryError, setFetchSummaryError] = useState(false)
   const [properties, setProperties] = useState([])
 
   const fetchSummary = async () => {
@@ -26,7 +28,10 @@ const HomePage = () => {
       let data = await response.json()
 
       if(response.status === 200){
-          setData(data)
+        setData(data)
+        setSummaryLoaded(true)
+      }else{
+        setFetchSummaryError(true)
       }
   }
 
@@ -49,21 +54,29 @@ const HomePage = () => {
 
   const theme = useTheme()
   const matches = useMediaQuery(theme.breakpoints.up('lg'));
+  const switchMobile = useMediaQuery(theme.breakpoints.down('md'));
   const styles = {
     container: {
         width: "85vw", 
-        height: "100%",
+        maxHeight: "100%",
         position: "absolute",
         top: "0", 
         left: "15vw",
         overflow: "auto",
+        
         [theme.breakpoints.down('lg')]: {
             width: "calc(100% - 56px)",
             left: "56px"
-        }
+        },
+        [theme.breakpoints.down('md')]: {
+          width: "100vw",
+          left: "0",
+          "::-webkit-scrollbar": {width: "0px", background: "transparent"}
+      }
     }
   }
   useEffect(()=>{
+    setMobileViewNavTitle("Dashboard")
     if(user.user_type === 1){
       fetchSummary()
     };
@@ -92,20 +105,20 @@ const HomePage = () => {
           justifyContent="flex-start"
           alignItems="flex-start"
           spacing={4}
-          mr={5}
-          ml={5}
+          mr={switchMobile ? 1 : 5}
+          ml={switchMobile ? 1 : 5}
         >
           <PageHeading title="Dashboard" />
-          <Summary data={data} />
+          <Summary data={data} summaryLoaded={summaryLoaded} fetchSummaryError={fetchSummaryError} />
         </Stack>
         <Stack
           direction={matches ? "row" : "column"}
           justifyContent={matches ? "space-between" : "flex-start"}
           alignItems={matches ? "flex-start" : "center"}
           spacing={2}
-          mr={5}
+          mr={switchMobile ? 1 : 5}
           mt={4}
-          ml={5}
+          ml={switchMobile ? 1 : 5}
           mb={3}
         >
           <QuickAdd setData={setData}/>
@@ -116,9 +129,9 @@ const HomePage = () => {
           justifyContent={matches ? "space-between" : "flex-start"}
           alignItems={matches ? "flex-start" : "center"}
           spacing={2}
-          mr={5}
+          mr={switchMobile ? 1 : 5}
           mt={4}
-          ml={5}
+          ml={switchMobile ? 1 : 5}
           mb={3}
         >
           <LatestIssues />

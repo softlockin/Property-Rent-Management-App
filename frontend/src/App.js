@@ -22,21 +22,22 @@ function App() {
 
   const [barVisible, setBarVisible] = useState(false)
   const [otherActions, setOtherActions] = useState(false)
+  const [mobileViewNavTitle, setMobileViewNavTitle] = useState('')
 
   return (
     
       <Router>
         <AuthProvider>
-          <Dashboard setBarVisible={setBarVisible} barVisible={barVisible} otherActions={otherActions} />
+          <Dashboard setBarVisible={setBarVisible} barVisible={barVisible} otherActions={otherActions} mobileViewNavTitle={mobileViewNavTitle} />
           <Routes>
             <Route path="*" element={<PageNotFound />} />
             <Route path="login" element={<LoginPage />} />
             <Route element={<PrivateRoute />} >
-              <Route exact path="/" element={<HomePage />} />
-              <Route path="property-list" element={<PropertiesPage />} />
-              <Route path="issue-tracker" element={<IssueTrackerPage />} />
-              <Route path="invoices" element={<InvoicesPage />} />
-              <Route path="map" element={<MapPage />} />
+              <Route exact path="/" element={<HomePage setMobileViewNavTitle={setMobileViewNavTitle}/>} />
+              <Route path="property-list" element={<PropertiesPage setMobileViewNavTitle={setMobileViewNavTitle}/>} />
+              <Route path="issue-tracker" element={<IssueTrackerPage setMobileViewNavTitle={setMobileViewNavTitle}/>} />
+              <Route path="invoices" element={<InvoicesPage setMobileViewNavTitle={setMobileViewNavTitle}/>} />
+              <Route path="map" element={<MapPage setMobileViewNavTitle={setMobileViewNavTitle}/>} />
               <Route path="complete-registration" element={<CompleteRegistration />} />
               <Route path="link-account/:token" element={<AccountLinkingPage setOtherActions={setOtherActions} />} />
             </Route>

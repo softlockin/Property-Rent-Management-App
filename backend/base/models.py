@@ -122,16 +122,26 @@ class RentInvoice(models.Model):
     
 class Issue(models.Model):
     name = models.CharField(max_length=25, null=False)
-    linked_to_property = models.ForeignKey(PropertyItem, on_delete=models.CASCADE)
+    linked_to_property = models.ForeignKey(PropertyItem, on_delete=models.CASCADE, null=True)
     property_name = models.CharField(max_length=30, null=True)
     description = models.TextField(max_length=256, null=False)
     closed = models.BooleanField(default=False, null=False)
     property_owner = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     cost = models.PositiveIntegerField(default=0)
     created_at = models.DateField(auto_now_add=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="issue_owner", on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.name
+
+class IssueMessage(models.Model):
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    linked_to_issue = models.ForeignKey(Issue, on_delete=models.CASCADE, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    message = models.TextField(max_length=256, blank=False)
+    user_type = models.PositiveSmallIntegerField(validators=[
+        MinValueValidator(1),
+        MaxValueValidator(2)], blank=False, default=1)
 
 class OwnerSummary(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)

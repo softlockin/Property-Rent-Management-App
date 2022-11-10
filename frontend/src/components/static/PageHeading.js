@@ -1,14 +1,17 @@
-import React, { useContext } from 'react'
-import { Button, Stack, Typography, useTheme } from "@mui/material"
+import React, { useContext } from 'react';
+import { Button, Stack, Typography, useTheme, Box } from "@mui/material";
+import useMediaQuery from '@mui/material/useMediaQuery';
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
-import AuthContext from '../../context/AuthContext'
+import AuthContext from '../../context/AuthContext';
 
 const PageHeading = ({ title }) => {
 
     const {user} = useContext(AuthContext)
     const theme = useTheme()
+    const switchMobile = useMediaQuery(theme.breakpoints.down('md'))
 
   return (
+    !switchMobile ?
     <Stack
         direction="row" 
         justifyContent="space-between"
@@ -36,6 +39,8 @@ const PageHeading = ({ title }) => {
             {user.username}
         </Button>
     </Stack>
+    : 
+    <Box sx={{width: "100%", height: "50px"}}></Box>
   )
 }
 

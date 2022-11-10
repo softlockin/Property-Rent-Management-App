@@ -8,7 +8,7 @@ import AuthContext from '../context/AuthContext'
 import { TypographyListItem } from '../components/custom/TypographyListItem';
 import PageHeading from '../components/static/PageHeading';
 
-const InvoicesPage = () => {
+const InvoicesPage = ({ setMobileViewNavTitle }) => {
 
   const theme = useTheme()
   const styles = {
@@ -25,6 +25,9 @@ const InvoicesPage = () => {
     }
   }
 
+  useEffect(()=>{
+    setMobileViewNavTitle("Invoices")
+  }, [])
 
   return (
     <>

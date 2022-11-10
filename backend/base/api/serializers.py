@@ -3,7 +3,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib import auth
 import json
 import os
-from base.models import User, PropertyItem, OwnerSummary, RentInvoice, Issue
+from base.models import User, PropertyItem, IssueMessage, OwnerSummary, RentInvoice, Issue
 from base.api.utils import Google, register_social_user, generate_username
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
@@ -119,7 +119,10 @@ class IssueSerializer(ModelSerializer):
         model = Issue
         fields = '__all__'
 
-
+class IssueMessageSerializer(ModelSerializer):
+    class Meta:
+        model = IssueMessage
+        fields = '__all__'
 class RentInvoiceSerializer(ModelSerializer):
     paid = serializers.BooleanField(required=True)
 

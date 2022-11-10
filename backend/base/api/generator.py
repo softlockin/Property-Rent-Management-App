@@ -11,12 +11,13 @@ def create_invoice(property_id, owner_id, tenant_id, price, currency, due_day):
 
     return invoice
 
-def create_issue(name, description):
-    property_item = PropertyItem.objects.get(id=19)
+def create_issue(name, description, by_id):
+    property_item = PropertyItem.objects.get(id=61)
     property_owner = User.objects.get(id=5)
+    created_by = User.objects.get(id=by_id)
     issue_data = {
         'name': name, 'linked_to_property': property_item, 'description': description,
-        'closed': False, 'property_owner': property_owner}
+        'closed': False, 'property_owner': property_owner, 'created_by': created_by}
     issue = Issue.objects.create(**issue_data)
     issue.property_name = property_item.name
     issue.save()

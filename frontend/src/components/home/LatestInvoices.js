@@ -2,6 +2,7 @@ import { Button, Divider, Stack, Typography, useTheme } from '@mui/material';
 import Grid2 from '@mui/material/Unstable_Grid2';
 import AuthContext from '../../context/AuthContext'
 import useMediaQuery from '@mui/material/useMediaQuery';
+import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from 'react-router-dom';
 import React, { useEffect, useState, useContext } from 'react';
 
@@ -11,6 +12,8 @@ const LatestInvoices = () => {
     const theme = useTheme()
     const matches = useMediaQuery(theme.breakpoints.up('lg'))
     const navigate = useNavigate()
+    const [fetchError, setFetchError] = useState(false)
+    const [loaded, setLoaded] = useState(false)
     const [invoice, setInvoice] = useState([])
 
     const styles = {
@@ -91,6 +94,9 @@ const LatestInvoices = () => {
   
         if(response.status === 200){
             setInvoice(data)
+            setLoaded(true)
+        }else{
+            setFetchError(true)
         }
     }
 
@@ -112,8 +118,13 @@ const LatestInvoices = () => {
             Latest issued invoices
         </Typography>
         <Divider sx={{width:"100%", borderBottomWidth: "1px", marginTop: "10px", marginBottom: "10px", backgroundColor: "#cdcbcb"}} />
-        {
-        invoice.length === 0 ?
+        {fetchError ?
+        <Typography variant="subtitle2" sx={{color: "#d32f2f", marginTop: "10px"}}>
+            Something went wrong while loading data. Refresh page!
+        </Typography>
+        :
+        loaded ?
+        (invoice.length === 0 ?
             <Typography variant="caption" ml={1} sx={{color: "#7d7d7d"}}>
                 There are no recent invoices
             </Typography>
@@ -122,13 +133,15 @@ const LatestInvoices = () => {
                 <InvoiceItem key={item.id} property={item.property_name} created_at={item.created_at} paid={item.paid} price={item.price+" "+item.currency} due_date={item.due_day}/>
                 )
             )
+        ):
+        <CircularProgress size="30px" sx={{marginTop: "10px"}} />
         }
         <Button
             onClick={() => {navigate('invoices')}}
             variant="outlined"
             elevation={0}
             size="small"
-            sx={{margin: "20px 0 25px", boxShadow:"0"}}
+            sx={{marginTop: "20px", boxShadow:"0"}}
         >
             View all invoices
         </Button>
