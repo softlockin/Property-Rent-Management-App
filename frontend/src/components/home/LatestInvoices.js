@@ -5,16 +5,19 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from 'react-router-dom';
 import React, { useEffect, useState, useContext } from 'react';
+import TimeAgo from 'javascript-time-ago';
 
 const LatestInvoices = () => {
 
     const {authTokens} = useContext(AuthContext)
     const theme = useTheme()
     const matches = useMediaQuery(theme.breakpoints.up('lg'))
+    const shortDueDateStatus = useMediaQuery(theme.breakpoints.down('sm'))
     const navigate = useNavigate()
     const [fetchError, setFetchError] = useState(false)
     const [loaded, setLoaded] = useState(false)
     const [invoice, setInvoice] = useState([])
+    const timeAgo = new TimeAgo('en-US')
 
     const styles = {
         invoicePill: {
@@ -45,28 +48,52 @@ const LatestInvoices = () => {
     function InvoiceItem({property, price, paid, created_at, due_date}) {
 
         let today = new Date()
+        let hours = today.toISOString().split("T")[1].slice(0,-5).split(":")
         let due_date_formated = new Date(due_date)
+        due_date_formated.setHours(parseInt(hours[0]), parseInt(hours[1]), parseInt(hours[2]))
+        let difference = due_date_formated.valueOf() - today.valueOf()
+        let difference_in_days = difference / 24 / 60 / 60 / 1000
         let overdue = false
-        if(today.getDate() - due_date_formated.getDate() > 0){
-            overdue = true
+        let is_today = today.toISOString().split("T")[0] === due_date_formated.toISOString().split("T")[0] ? true : false
+        let is_tomorrow = difference/60/60/1000 <=24 ? true : false
+        if(difference < 0){
+            if(due_date_formated.toISOString().split("T")[0] === today.toISOString().split("T")[0]){
+                overdue = false
+                is_today = true
+            }else{
+                overdue = true
+            }
         }
 
         return(
             <Grid2 container sx={{width: "100%"}}>
-                <Grid2 xs={6}>
-                    <Typography variant="body1" sx={{color: "#02143d"}}>
+                <Grid2 xs={6} bss={5}>
+                    <Typography variant="body1" 
+                            sx={{color: "#02143d", [theme.breakpoints.down('bss')]: {
+                                fontSize: "14px"
+                            }}}>
                         {"IN: "+property}
                     </Typography>
                 </Grid2>
-                <Grid2 display="flex" justifyContent="flex-start" alignItems="center" xs={2}>
-                    <Typography variant="body2" sx={{color: "#02143d"}}>
+                <Grid2 display="flex" justifyContent="flex-start" alignItems="center" xs={2} bss={2}>
+                    <Typography variant="body2" 
+                        sx={{color: "#02143d", [theme.breakpoints.down('bss')]: {
+                            fontSize: "13px"
+                        }}}>
                         {price}
                     </Typography>
                 </Grid2>
-                <Grid2 display="flex" justifyContent="flex-end" alignItems="center" xs={4}>
-                    <Typography variant="caption" sx={paid === true ? styles.invoicePill.paid : overdue === true ? styles.invoicePill.overdue : styles.invoicePill.due}>
-                        {paid === true ? "Paid" : overdue === true ? "Overdue" : "Due"}
-                    </Typography>
+                <Grid2 display="flex" justifyContent="flex-end" alignItems="center" xs={4} bss={5}>
+                    {shortDueDateStatus ?
+                        <Typography variant="caption" sx={paid === true ? styles.invoicePill.paid : overdue === true ? styles.invoicePill.overdue : styles.invoicePill.due}>
+                            {paid === true ? "Paid" : overdue === true ? `Due ${timeAgo.format(new Date(due_date_formated))}` : is_today ? "Due today" : is_tomorrow ? "Due tomorrow" : `Due ${timeAgo.format(today.valueOf() + (difference_in_days) * 24 * 60 * 60 * 1000)}`}
+                        </Typography>
+                        :
+                        <Typography variant="caption" sx={paid === true ? styles.invoicePill.paid : overdue === true ? styles.invoicePill.overdue : styles.invoicePill.due}>
+                            {paid === true ? "Paid" : overdue === true ? "Overdue" : "Due"}
+                         </Typography>
+                    }
+
                 </Grid2>
                 <Grid2 xs={8} mb={1}>
                     <Typography variant="caption" sx={{color: "#7d7d7d"}}>
@@ -74,7 +101,10 @@ const LatestInvoices = () => {
                     </Typography>
                 </Grid2>
                 <Grid2 display="flex" justifyContent="flex-end" alignItems="center" xs={4} mb={1}>
-                    <Typography variant="caption" sx={{color: "#7d7d7d"}}>
+                    <Typography variant="caption" 
+                        sx={{color: "#7d7d7d", [theme.breakpoints.down('sm')]: {
+                            display: "none"
+                        }}}>
                         {"Due date: "+due_date}
                     </Typography>
                 </Grid2>

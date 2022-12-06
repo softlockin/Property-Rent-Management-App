@@ -2,6 +2,7 @@ import React, { memo, useEffect } from "react";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Paper, Typography, useTheme } from "@mui/material";
+import AnnouncementRoundedIcon from '@mui/icons-material/AnnouncementRounded';
 
 const IssuesList = ({ data, setEditModalOpen, setSelectedIssue }) => {
   const theme = useTheme()
@@ -99,7 +100,7 @@ const IssuesList = ({ data, setEditModalOpen, setSelectedIssue }) => {
       
       <Paper onClick={() => {
         setSelectedIssue(props);
-        setEditModalOpen(true);}} elevation={1} sx={{backgroundColor: `${props.closed ? "#f0f8ec" : "#f8efec"}`, display: "flex", flexDirection: "column", padding: "0 7px 7px 7px", width: "55vw", [theme.breakpoints.down('sm')]: {width: "95vw"}, maxHeight: "45vh", border: `1px solid ${props.closed ?  "#14ad00" : "#d64400"}`, borderRadius: "10px", "&.MuiPaper-root": {marginLeft: "0px", marginBottom: "15px"}, "&:hover": {cursor: "pointer"}}}>
+        setEditModalOpen(true);}} elevation={1} sx={{position: "relative", overflow: "hidden", backgroundColor: `${props.closed ? "#f0f8ec" : "#f8efec"}`, display: "flex", flexDirection: "column", padding: "0 7px 7px 7px", width: "55vw", [theme.breakpoints.down('sm')]: {width: "95vw"}, maxHeight: "45vh", border: `1px solid ${props.closed ?  "#14ad00" : "#d64400"}`, borderRadius: "10px", "&.MuiPaper-root": {marginLeft: "0px", marginBottom: "15px"}, "&:hover": {cursor: "pointer"}}}>
         <Grid2
           container
           spacing={0}
@@ -117,7 +118,7 @@ const IssuesList = ({ data, setEditModalOpen, setSelectedIssue }) => {
           <Grid2 xs={6}>
             <Typography
               variant="caption"
-              sx={{color: `${props.closed ? "#14ad00" : "#d64400"}`, fontWeight: "500"}}
+              sx={{color: `${props.closed ? "#14ad00" : "#d64400"}`, fontWeight: "500", zIndex: "2", position: "absolute"}}
             >
               {props.closed  ? "Closed" : "Open"}
             </Typography>
@@ -177,64 +178,7 @@ const IssuesList = ({ data, setEditModalOpen, setSelectedIssue }) => {
             </Typography>
           </Grid2>
         </Grid2>
-        {/* <Grid2
-          container
-          spacing={0}
-          mt={0}
-          sx={{
-            borderRadius: "10px",
-            width: "100%",
-            marginLeft: "0px",
-            marginBottom: "0px",
-            "&:hover": {
-              backgroundColor: "#fafafa",
-              cursor: "pointer"
-            },
-          }}
-        >
-          <Grid2
-            xs={4}
-            sx={{display: "flex", flexDirection: "row", alignItems: "center", paddingLeft: "4px"}}
-          >
-            
-          </Grid2>
-          <Grid2 xs={5} sx={{display: "flex", flexDirection: "row", alignItems: "center",paddingLeft: "4px"}}>
-            <Typography
-              variant="subtitle2"
-              sx={{ color: "#7d7d7d", fontWeight: "400", padding: "10px 0px 10px 10px" }}
-            >
-              {props.address}
-            </Typography>
-          </Grid2>
-          <Grid2 xs={3} sx={{paddingLeft: "4px"}}>
-            <Typography
-              variant="subtitle2"
-              sx={{ color: "#7d7d7d", fontWeight: "400", padding: "10px 0px 10px 10px" }}
-            >
-              {props.price + (props.currency === 2 ? " LEI" : " EUR")}
-            </Typography>
-          </Grid2>
-          <Grid2 xs={4} sx={{display: "flex", flexDirection: "row", justifyContent: "flex-start", alignItems: "center", paddingLeft: "4px"}}>
-            <Typography
-              variant="caption"
-              sx={
-                props.tenant === null
-                  ? styles.statusPill["unoccupied"]
-                  : styles.statusPill["rented"]
-              }
-            >
-              {props.tenant === null ? "Unoccupied" : "Rented"}
-            </Typography>
-          </Grid2>
-          <Grid2 xs={8} sx={{display: "flex", flexDirection: "row", alignItems: "center", paddingLeft: "4px"}}>
-            <Typography
-              variant="subtitle2"
-              sx={{ color: "#7d7d7d", fontWeight: "400", overflow: "auto", padding: "10px 0px 10px 10px" }}
-            >
-              {props.tenant ? props.tenant : "--"}
-            </Typography>
-          </Grid2>
-        </Grid2> */}
+        <AnnouncementRoundedIcon sx={{position: 'absolute', top: "0", right: "0", height: "110%", width: "150px", color: "#000", opacity: "0.08"}} />
       </Paper>   
     );
   }

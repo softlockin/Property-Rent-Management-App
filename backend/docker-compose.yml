@@ -1,0 +1,12 @@
+version: '3.9'
+
+services:
+
+  web:
+    container_name: rentapp-backend
+    build:
+      context: .
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"

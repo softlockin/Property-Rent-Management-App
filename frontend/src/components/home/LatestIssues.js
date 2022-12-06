@@ -38,17 +38,28 @@ const LatestIssues = () => {
     function IssueItem({p, d, c, t}) {
         return(
             <Grid2 container sx={{width: "100%"}}>
-                <Grid2 xs={5}>
-                    <Typography variant="body1" sx={{color: "#02143d"}}>
+                <Grid2 xs={6} bss={5}>
+                    <Typography variant="body1" 
+                        sx={{color: "#02143d", 
+                            [theme.breakpoints.down('bss')]: {
+                                fontSize: "14px"
+                            },}}
+                    >
                         {p}
                     </Typography>
                 </Grid2>
-                <Grid2 display="flex" justifyContent="flex-start" alignItems="center" xs={5}>
-                    <Typography variant="body2" sx={{color: "#02143d"}}>
+                <Grid2 display="flex" justifyContent="flex-start" alignItems="center" xs={4} bss={5}>
+                    <Typography variant="body2" 
+                    sx={{color: "#02143d", 
+                        [theme.breakpoints.down('bss')]: {
+                            fontSize: "13px"
+                        }
+                        }}
+                    >
                         {d}
                     </Typography>
                 </Grid2>
-                <Grid2 display="flex" justifyContent="flex-end" alignItems="center" xs={2}>
+                <Grid2 display="flex" justifyContent="flex-end" alignItems="center" xs={2} bss={2}>
                     <Typography variant="caption" sx={c === true ? styles.issuePill.closed : styles.issuePill.open}>
                         {c === true ? "closed" : "open"}
                     </Typography>

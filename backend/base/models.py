@@ -114,6 +114,7 @@ class RentInvoice(models.Model):
     property_name = models.CharField(max_length=30, null=True)
     owner_id = models.PositiveSmallIntegerField(blank=False)
     tenant_id = models.PositiveSmallIntegerField(blank=False)
+    tenant_email = models.CharField(max_length=30, null=True)
     price = models.PositiveIntegerField()
     currency = models.CharField(blank=False, max_length=4, default='LEI')
     created_at = models.DateField(auto_now_add=True)

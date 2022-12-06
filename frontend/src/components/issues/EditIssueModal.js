@@ -111,6 +111,8 @@ const EditIssueModal = ({data, authTokens, editModalOpen, setEditModalOpen, setR
             let message = await response.json()
 
             if(status === 200){
+                setClosingIssue(false)
+                setCostValue('')
                 setTimeout(function(){
                     setSnackbar(prev => ({
                         ...prev,
@@ -130,6 +132,8 @@ const EditIssueModal = ({data, authTokens, editModalOpen, setEditModalOpen, setR
                 setRefreshList(true)
                 setEditModalOpen(false)
             }else{
+                setClosingIssue(false)
+                setCostValue('')
                 setEditModalOpen(false)
                 setSnackbar(prev => ({
                     ...prev,
@@ -184,6 +188,13 @@ const EditIssueModal = ({data, authTokens, editModalOpen, setEditModalOpen, setR
 
     useEffect(() => {
         if(editModalOpen === true){
+            setSnackbar(prev => ({
+                ...prev,
+                open: false,
+                type: 'warning',
+                message: ''
+
+            }))
             fetchIssueMessages()
         }
     }, [editModalOpen])

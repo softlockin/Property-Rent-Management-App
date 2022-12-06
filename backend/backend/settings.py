@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_crontab',
 ]
 
 REST_FRAMEWORK = {
@@ -170,3 +171,32 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'filters': ['require_debug_true'],
+        },
+    },
+    'loggers': {
+        'console_message': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'propagate': True,
+        },
+    },
+}
+
+CRONJOBS = [
+    ('0 0 * * *', 'backend.cron.invoice_scheduled_task', '>> /app/cron/django_cron.log 2>&1 '),
+    ('0 0 * * *', 'backend.cron.overdue_check_task', '>> /app/cron/django_cron.log 2>&1 '),
+]

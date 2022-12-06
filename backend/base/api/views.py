@@ -200,6 +200,7 @@ class RentInvoiceAPIView(APIView):
             return Response({"error": "Something went wrong."}, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request):
+        today = datetime.date.today()
         user = request.user
         data = request.data
         try:
@@ -212,6 +213,8 @@ class RentInvoiceAPIView(APIView):
                         serializer.is_valid()
                         if(filtered_data['paid'] == True):
                             owner_summary = OwnerSummary.objects.get(user_id=user.id)
+                            if (invoice.due_day - today).days < 0:
+                                owner_summary.overdue = F('overdue') - 1
                             owner_summary.income = F('income') + (invoice.price*5 if invoice.currency == 'EUR' else invoice.price)
                             owner_summary.save()
                         serializer.save()
@@ -354,7 +357,10 @@ class EditIssueAPIView(APIView):
                     if serializer.is_valid():
                         if('closed' in data and data['closed'] == True):
                             owner_summary = OwnerSummary.objects.get(user_id=user.id)
-                            owner_summary.open_issues = F('open_issues') - 1
+                            if owner_summary.open_issues > 0:
+                                owner_summary.open_issues = F('open_issues') - 1
+                            else:
+                                pass
                             if('cost' in data and data['cost'] > 0):
                                 owner_summary.expenses = F('expenses') + data['cost']
                             owner_summary.save()
