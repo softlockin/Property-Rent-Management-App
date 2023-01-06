@@ -89,11 +89,14 @@ const PropertiesPage = ({ setMobileViewNavTitle }) => {
         }
     }, [refreshList])
     
+    useEffect(()=>{
+        if(editModalOpen === false){setSelectedProperty(null)}
+    }, [editModalOpen])
 
     return (
         <>
             <AddPropertyModal authTokens={authTokens} setProperties={setProperties} setModalOpen={setModalOpen} modalOpen={modalOpen} setSnackbar={setSnackbar} />
-            <EditPropertyModal editModalOpen={editModalOpen} setEditModalOpen={setEditModalOpen} data={selectedProperty} authTokens={authTokens} setRefreshList={setRefreshList} setSnackbar={setSnackbar}/>
+            <EditPropertyModal editModalOpen={editModalOpen} setEditModalOpen={setEditModalOpen} setSelectedProperty={setSelectedProperty} data={selectedProperty} authTokens={authTokens} setRefreshList={setRefreshList} setSnackbar={setSnackbar}/>
             <Box 
             sx={styles.container}
             >

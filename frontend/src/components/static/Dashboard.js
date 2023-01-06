@@ -83,6 +83,9 @@ const Dashboard = (props) => {
             '.MuiTypography-root':{
                 [theme.breakpoints.down('lg')]: {
                     display: "none"
+                },
+                [theme.breakpoints.down('md')]: {
+                    display: "block"
                 }
             },
             '&.MuiButtonBase-root.Mui-selected': {
@@ -168,7 +171,7 @@ const Dashboard = (props) => {
     }
   }, [userType])
 
-if(props.barVisible){
+if(props.barVisible && style !== null){
   return (
     <>
     {!switchMobile ?
@@ -234,7 +237,6 @@ if(props.barVisible){
                             <LogoutRoundedIcon />
                         </ListItemIcon>
                         <ListItemText
-                            disableRipple
                             primary="Logout"
                             primaryTypographyProps={{fontWeight: "400", fontSize: "15px"}} 
                         />
@@ -246,8 +248,8 @@ if(props.barVisible){
     </Box>
     :
     <React.Fragment>
-        <Box sx={{width: "100%", borderBottom: `2px solid ${theme.palette.primary.main}`, backgroundColor: "#fff", display: "flex", position: "relative", zIndex: "1", justifyContent: "space-between", alignItems: "center", flexDirection: "row"}}>
-            <Button startIcon={<MenuRoundedIcon />} onClick={()=>setOpenMenu(true)} sx={{zIndex: "1", marginLeft: "10px", minWidth: "5px"}}>
+        <Box sx={{width: "100%", borderBottom: `2px solid ${userType === 1 ? theme.palette.primary.main : theme.palette.secondary.main}`, backgroundColor: "#fff", display: "flex", position: "relative", zIndex: "1", justifyContent: "space-between", alignItems: "center", flexDirection: "row"}}>
+            <Button startIcon={<MenuRoundedIcon />} onClick={()=>setOpenMenu(true)} sx={{zIndex: "1", marginLeft: "10px", minWidth: "5px", color: `${userType === 1 ? theme.palette.primary.main : theme.palette.secondary.main}`}}>
                 PMapp
             </Button>
             <Typography variant="h6" sx={{color: "#02143d", fontWeight: "600", position: "absolute", left: "calc(50% - 54.883px)"}}>
@@ -308,7 +310,7 @@ if(props.barVisible){
                         <ListItemButton
                             selected={false}
                             disableRipple
-                            onClick={logoutUser}
+                            onClick={()=> {return(setOpenMenu(false),logoutUser())}}
                             sx={style}
                         >
                             <ListItemIcon sx={{minWidth: "40px"}}>
@@ -329,14 +331,13 @@ if(props.barVisible){
                         <ListItemButton
                             disableRipple
                             selected={false}
-                            onClick={logoutUser}
+                            onClick={()=> {return(setOpenMenu(false),logoutUser())}}
                             sx={style}
                         >
                             <ListItemIcon sx={{minWidth: "40px"}}>
                                 <LogoutRoundedIcon />
                             </ListItemIcon>
                             <ListItemText
-                                disableRipple
                                 primary="Logout"
                                 primaryTypographyProps={{fontWeight: "400", fontSize: "15px"}} 
                             />

@@ -102,11 +102,10 @@ const CompleteRegistration = () => {
                 sx={{width: "100%", paddingLeft: "7px"}}
                 >
                 <TypographyListItem color="#1976d2" text="Property listing" />
-                <TypographyListItem color="#1976d2" text="Rental agreement creation" />
                 <TypographyListItem color="#1976d2" text="Tenant account invite based linking" />
                 <TypographyListItem color="#1976d2" text="Income and expenses tracking" />
                 <TypographyListItem color="#1976d2" text="Properties information overview" />
-                <TypographyListItem color="#1976d2" text="Rent overdue notifications" />
+                <TypographyListItem color="#1976d2" text="Rent invoice auto-creation" />
                 <TypographyListItem color="#1976d2" text="Issue tracking system" />
               </Stack>
             
@@ -149,7 +148,6 @@ const CompleteRegistration = () => {
                 >
                   <TypographyListItem color="#388e3c" text="Search map for available properties" />
                   <TypographyListItem color="#388e3c" text="View rent information" />
-                  <TypographyListItem color="#388e3c" text="Receive, review and accept rental agreement" />
                   <TypographyListItem color="#388e3c" text="Tenant account linking to property" />
                   <TypographyListItem color="#388e3c" text="Issue tracking system" />
               </Stack>

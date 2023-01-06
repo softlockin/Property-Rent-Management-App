@@ -5,6 +5,9 @@ from django.contrib.auth.models import (
     AbstractBaseUser, BaseUserManager, PermissionsMixin)
 from django.core.validators import MinValueValidator, MaxValueValidator
 import datetime
+import requests
+import json
+import os
 
 
 class UserManager(BaseUserManager):
@@ -96,15 +99,36 @@ class PropertyItem(models.Model):
     currency = models.PositiveSmallIntegerField(choices=CURRENCY, default=2)
     address = models.TextField(max_length=256, null=False)
     city = models.TextField(max_length=50, null=False)
+    coords = models.CharField(max_length=50, null=True)
     tenant = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='tenant', on_delete=models.CASCADE, null=True, blank=True)
     tenant_email = models.CharField(max_length=56, null=True)
+    owner_email = models.CharField(max_length=56, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    rental_first_day = models.DateField(auto_now=False, auto_now_add=False, null=True)
     
     def __str__(self):
         return self.name
 
+    def get_coords(self):
+        GOOGLE_GEOLOC_API = os.getenv('GOOGLE_GEOLOC_KEY')
+        address = self.address.split(' ')
+        address.append(self.city)
+        formatted_address = "+".join(address)
+        url = f'https://maps.googleapis.com/maps/api/geocode/json?address={formatted_address}&key={GOOGLE_GEOLOC_API}'
+        try:
+            response = requests.get(url)
+            if response.status_code==200:
+                response_json = json.loads(response.text)
+                if response_json['results'][0]['geometry']['location_type'] != "APPROXIMATE":
+                    return(str(str(response_json['results'][0]['geometry']['location']['lat'])+","+str(response_json['results'][0]['geometry']['location']['lng'])))
+            return None
+        except:
+            return None
+
     def save(self, *args, **kwargs):
+        if self.coords == None:
+            self.coords = self.get_coords()
         if self.tenant != None:
             self.tenant_email = User.objects.get(id=self.tenant.id).email
         super(PropertyItem, self).save(*args, **kwargs)

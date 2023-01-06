@@ -1,5 +1,5 @@
 import { LoadingButton } from '@mui/lab';
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { Paper, Typography, TextField, Select, MenuItem, Snackbar, Alert, useTheme, FormHelperText, FormControl } from '@mui/material';
 import Grid2 from '@mui/material/Unstable_Grid2';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -7,7 +7,7 @@ import Slide from '@mui/material/Slide';
 import Tooltip from '@mui/material/Tooltip';
 import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import InsertLinkRoundedIcon from '@mui/icons-material/InsertLinkRounded';
-import AuthContext from '../../context/AuthContext';
+import AuthContext from '../../../context/AuthContext';
 
 const TenantInvite = ({properties}) => {
 

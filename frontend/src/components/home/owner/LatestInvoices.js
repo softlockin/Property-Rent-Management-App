@@ -1,6 +1,6 @@
 import { Button, Divider, Stack, Typography, useTheme } from '@mui/material';
 import Grid2 from '@mui/material/Unstable_Grid2';
-import AuthContext from '../../context/AuthContext'
+import AuthContext from '../../../context/AuthContext'
 import useMediaQuery from '@mui/material/useMediaQuery';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from 'react-router-dom';

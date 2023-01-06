@@ -6,7 +6,7 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import React, { useEffect, useState } from 'react'
 import IssueMessages from './IssueMessages';
 
-const EditIssueModal = ({data, authTokens, editModalOpen, setEditModalOpen, setRefreshList, setSnackbar}) => {
+const EditIssueModal = ({data, authTokens, user, editModalOpen, setEditModalOpen, setRefreshList, setSnackbar, setSelectedIssue}) => {
     const [closingIssue, setClosingIssue] = useState(false)
     const [costValue, setCostValue] = useState('')
     const [issueMessages, setIssueMessages] = useState([])
@@ -29,7 +29,7 @@ const EditIssueModal = ({data, authTokens, editModalOpen, setEditModalOpen, setR
             boxShadow: 24,
             p: 4,
             outline: 'none',
-            padding: "0"
+            padding: "0px 0px 20px 0px"
         },
         textField:{
             '& .MuiFilledInput-root': {
@@ -70,7 +70,7 @@ const EditIssueModal = ({data, authTokens, editModalOpen, setEditModalOpen, setR
             open: {
               color: "#d64400",
               fontWeight: "400",
-              marginLeft: "10px",
+              margin: "10px 0px 5px 10px",
               border: "1px solid #d64400",
               borderRadius: "10px",
               padding: "0px 7px 0px 7px",
@@ -78,8 +78,7 @@ const EditIssueModal = ({data, authTokens, editModalOpen, setEditModalOpen, setR
             },
             closed: {
               color: "#14ad00",
-              marginLeft: "10px",
-              marginBottom: "5px",
+              margin: "10px 0px 5px 10px",
               border: "1px solid #14ad00",
               borderRadius: "10px",
               padding: "0px 7px 0px 7px",
@@ -89,6 +88,8 @@ const EditIssueModal = ({data, authTokens, editModalOpen, setEditModalOpen, setR
     }
 
     const handleClose = () => {
+        setSelectedIssue(null)
+        setIssueMessages([])
         setEditModalOpen(false)
         setClosingIssue(false)
         setCostValue('')
@@ -205,9 +206,15 @@ const EditIssueModal = ({data, authTokens, editModalOpen, setEditModalOpen, setR
     >
         <Box sx={styles.modal}>
             <Box sx={{display: "flex", flexDirection: "row", alignItems: "flex-start", width: "100%"}}>
-                <Box sx={{width: "80%"}}>
+                <Box sx={{width: "80%", display: "flex", flexDirection: "row", justifyContent: "flex-start", alignItems: "center"}}>
                     <Typography variant="h5" sx={{color: "#02143d", fontWeight: "600", margin: "10px 0 5px 10px"}}>
                         {data?.name}
+                    </Typography>
+                    <Typography
+                        variant="caption"
+                        sx={data?.closed ? styles.statusPill.closed : styles.statusPill.open}
+                    >
+                        {data?.closed ? "Closed" : "Open"}
                     </Typography>
                 </Box>
                 <Box sx={{width: "20%", display: "flex", justifyContent: "flex-end", alignItems: "flex-end", margin: "5px"}}>
@@ -268,7 +275,7 @@ const EditIssueModal = ({data, authTokens, editModalOpen, setEditModalOpen, setR
                     <Typography variant="subtitle2" sx={{color: "#02143d", padding: "10px 10px 0px 20px"}}>
                         Messages
                     </Typography>
-                    <Box sx={{backgroundColor: "#f2f2f2", width: "100%", minHeight: "120px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
+                    <Box sx={{backgroundColor: "#f2f2f2", width: "100%", minHeight: "120px", maxHeight: "280px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
                         <QuestionAnswerIcon sx={{color: "#919191", fontSize: "65px", position: "fixed", zIndex: "1"}} />
                         <Box sx={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", margin: "0px 20px 0px 20px", border: "1px solid #919191", minHeight: "inherit", minWidth: "calc(100% - 42px)"}}>
                             { issueMessages.length === 0 ?
@@ -304,6 +311,7 @@ const EditIssueModal = ({data, authTokens, editModalOpen, setEditModalOpen, setR
                     : null}
                 </Stack>
             </Box>
+            {user.user_type === 1 ?
             <Box sx={{display: "flex", justifyContent: "space-between", padding: "20px"}}>
                 <Box sx={{display: "flex", justifyContent: "center", alignItems: "center"}}>
                     <Typography variant="subtitle2" sx={{display: {[theme.breakpoints.down('bss')]: {display: 'none'}},color: "#02143d"}}>
@@ -392,6 +400,8 @@ const EditIssueModal = ({data, authTokens, editModalOpen, setEditModalOpen, setR
                     </LoadingButton>
                 </Box>
             </Box>
+            : null
+            }
         </Box>
     </Modal>
   )

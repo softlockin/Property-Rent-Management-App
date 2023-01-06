@@ -2,9 +2,9 @@ import { LoadingButton } from '@mui/lab';
 import { Grid, Paper, Typography, TextField, Select, MenuItem, Snackbar, Alert, useTheme } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Slide from '@mui/material/Slide';
-import AuthContext from '../../context/AuthContext';
+import AuthContext from '../../../context/AuthContext';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 
 const QuickAdd = (props) => {
 
@@ -137,6 +137,7 @@ const QuickAdd = (props) => {
                 }),
               })
             let status = response.status
+            let data = await response.json()
             setLoading(false)
             
             if(status === 201){
@@ -161,6 +162,10 @@ const QuickAdd = (props) => {
                     ...prev,
                     properties_listed: prev.properties_listed + 1
                 }))
+                props.setProperties(prev => ([
+                    data,
+                    ...prev,
+                ]))
             }else{
                 setSnackbar(prev => ({
                     ...prev,

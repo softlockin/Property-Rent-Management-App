@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useContext } from 'react'
-import jwt_decode from "jwt-decode"
-import { Box, Button, Modal, Stack, Typography, useTheme } from "@mui/material"
-import MapsHomeWorkRoundedIcon from '@mui/icons-material/MapsHomeWorkRounded';
-import ArrowRightRoundedIcon from '@mui/icons-material/ArrowRightRounded';
-import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
-import AuthContext from '../context/AuthContext'
-import { TypographyListItem } from '../components/custom/TypographyListItem';
+import React, { useState, useEffect, useContext } from 'react';
+import AuthContext from '../context/AuthContext';
+import { Box, Stack, useTheme } from "@mui/material";
 import PageHeading from '../components/static/PageHeading';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import Map from '../components/map/Map';
 
 const MapPage = ({ setMobileViewNavTitle }) => {
 
   const theme = useTheme()
+  const [properties, setProperties] = useState()
+  const {authTokens, user} = useContext(AuthContext)
+  const switchMobile = useMediaQuery(theme.breakpoints.down('md'));
   const styles = {
     container: {
         width: "85vw", 
@@ -21,12 +21,32 @@ const MapPage = ({ setMobileViewNavTitle }) => {
         [theme.breakpoints.down('lg')]: {
             width: "calc(100% - 56px)",
             left: "56px"
-        }
+        },
+        [theme.breakpoints.down('md')]: {
+          width: "100%",
+          left: "0",
+        },
+    }
+  }
+
+  const fetchProperties = async () => {
+    let response = await fetch('http://127.0.0.1:8000/api/map/', {
+    method: 'GET',
+    headers:{
+        'Content-Type':'application/json',
+        'Authorization':'Bearer ' + String(authTokens.access)
+    },
+    })
+    let data = await response.json()
+
+    if(response.status === 200){
+        setProperties(data)
     }
   }
 
   useEffect(()=>{
     setMobileViewNavTitle("Map")
+      fetchProperties()
   }, [])
 
   return (
@@ -37,11 +57,15 @@ const MapPage = ({ setMobileViewNavTitle }) => {
         direction="column" 
         justifyContent="flex-start"
         alignItems="center"
-        spacing={4}
-        mr={5}
-        ml={5}
+        spacing={switchMobile ? 0 : 4}
+        mr={switchMobile ? 0 : 5}
+        ml={switchMobile ? 0 : 5}
+        sx={{height: "100%"}}
       >
         <PageHeading title="Map" />
+        <Box sx={{width: "100%", height: `${switchMobile ? "100%" : "85%"}`}}>
+          <Map properties={properties} />
+        </Box>
       </Stack>
     </Box>
   )

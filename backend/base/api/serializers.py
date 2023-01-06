@@ -16,6 +16,11 @@ class PropertyListSerializer(ModelSerializer):
         model = PropertyItem
         fields= '__all__'
 
+class MapSerializer(ModelSerializer):
+    class Meta:
+        model = PropertyItem
+        fields= ['name', 'coords', 'price', 'currency']
+
 class SummaryFetchSerializer(ModelSerializer):
     class Meta:
         model = OwnerSummary
@@ -61,8 +66,6 @@ class RegisterSerializer(ModelSerializer):
 
     def create(self, validated_data):
         return User.objects.create_user( validated_data['username'].lower(), validated_data['email'].lower(), validated_data['user_type'], validated_data['password'] )
-
-
 
 class EmailVerificationSerializer(ModelSerializer):
     token = serializers.CharField(max_length=555, read_only=True)
@@ -123,6 +126,7 @@ class IssueMessageSerializer(ModelSerializer):
     class Meta:
         model = IssueMessage
         fields = '__all__'
+
 class RentInvoiceSerializer(ModelSerializer):
     paid = serializers.BooleanField(required=True)
 

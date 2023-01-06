@@ -55,9 +55,9 @@ const IssueTrackerPage = ({ setMobileViewNavTitle }) => {
         'Authorization':'Bearer ' + String(authTokens.access)
     },
     })
-    let data = await response.json()
-
+    
     if(response.status === 200){
+        let data = await response.json()
         setIssues(data)
         setIssuesFetched(true)
     }else{
@@ -67,14 +67,12 @@ const IssueTrackerPage = ({ setMobileViewNavTitle }) => {
 
   useEffect(()=>{
     setMobileViewNavTitle("Issue Tracker")
-    if(user.user_type === 1){
-        let isCancelled = false;
-        if(!isCancelled){
-            fetchIssues()
-        }
-        return () => {
-            isCancelled = true
-        } 
+    let isCancelled = false;
+    if(!isCancelled){
+        fetchIssues()
+    }
+    return () => {
+        isCancelled = true
     }
   }, [])
 
@@ -87,7 +85,7 @@ useEffect(()=>{
 
   return (
   <>
-    <EditIssueModal editModalOpen={editModalOpen} setEditModalOpen={setEditModalOpen} data={selectedIssue} authTokens={authTokens} setRefreshList={setRefreshList} setSnackbar={setSnackbar}/>
+    <EditIssueModal setSelectedIssue={setSelectedIssue} user={user} editModalOpen={editModalOpen} setEditModalOpen={setEditModalOpen} data={selectedIssue} authTokens={authTokens} setRefreshList={setRefreshList} setSnackbar={setSnackbar}/>
     <Box 
     sx={styles.container}
     >

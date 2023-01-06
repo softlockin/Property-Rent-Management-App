@@ -1,16 +1,21 @@
 from base.models import RentInvoice, Issue, PropertyItem, User
 import datetime
+import calendar
 import logging
 
 logger = logging.getLogger("console_message")
 
 def create_invoice():
     today = datetime.date.today()
+    last_day_of_month = calendar.monthrange(today.year, today.month)[1]
     generate_invoice_for = PropertyItem.objects.exclude(tenant_id=None)
     
     if len(generate_invoice_for) > 0:
         for item in generate_invoice_for:
-            due_date = today.replace(day=item.rent_due_day)
+            try:
+                due_date = today.replace(day=item.rent_due_day)
+            except:
+                due_date = today.replace(day=last_day_of_month)
             tenant_email= User.object.get(id=item.tenant_id).tenant_email
             invoice_data = {
                 'property_id': item.id, 'property_name': item.name, 'owner_id': item.owner_id, 'tenant_id': item.tenant_id, 'tenant_email': tenant_email,

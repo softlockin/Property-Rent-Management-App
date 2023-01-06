@@ -11,6 +11,7 @@ const EditPropertyModal = (props) => {
     const dueDayInfo = "If day is not valid when the invoice is generated, the last valid day of the month will be auto-selected."
     const [tenant, setTenant] = useState(null)
     const [loading, setLoading] = useState(false)
+    const [showModal, setShowModal] = useState(false)
     const [loadingLinkBtn, setLoadingLinkBtn] = useState(false)
     const [linkRequestResponse, setLinkRequestResponse] = useState({})
     const [linkRequestSent, setLinkRequestSent] = useState(false)
@@ -103,18 +104,6 @@ const EditPropertyModal = (props) => {
         },
     }
 
-    useEffect(()=>{
-        if(props.editModalOpen === true){
-            setTenant(props.data['tenant']);
-            setInputFields(prev => ({
-                ...prev,
-                name: props.data?.name,
-                price: props.data?.price.toString(),
-                currency: props.data?.currency
-            }))
-        }  
-    }, [props.editModalOpen])
-
     const handleClose = () => {
         setErrors({
             name: {
@@ -131,7 +120,6 @@ const EditPropertyModal = (props) => {
             }
         });
         setLinkRequestSent(false);
-        setTenant(null);
         setLinkRequestResponse({});
         setConfirmDelete(false);
         props.setEditModalOpen(false);
@@ -382,9 +370,35 @@ const EditPropertyModal = (props) => {
 
     }
 
+    useEffect(()=>{
+        if(props.editModalOpen === true){
+            if(props.data){
+                setTenant(props.data['tenant']);
+                setInputFields(prev => ({
+                    ...prev,
+                    name: props.data?.name,
+                    price: props.data?.price.toString(),
+                    currency: props.data?.currency
+                }))
+                setShowModal(true)
+            }
+        }
+        if(props.editModalOpen === false){
+            setShowModal(false)
+            setTenant(null);
+            setInputFields({
+                name: '',
+                price: '',
+                currency: '',
+                email: '',
+                due_day: '1'
+            })
+        }  
+    }, [props.editModalOpen])
+
   return (
     <Modal
-        open={props.editModalOpen}
+        open={showModal}
     >
         <Box sx={styles.modal}>
             <Box sx={{display: "flex", flexDirection: "row", alignItems: "flex-start", width: "100%"}}>

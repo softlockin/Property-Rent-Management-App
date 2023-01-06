@@ -15,7 +15,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken, Token
-from .serializers import AcceptLinkUserToPropertySerializer, IssueMessageSerializer, LinkUserToPropertyRequestSerializer, SummaryFetchSerializer, PasswordResetSerializer, SetTypeAfterGapiLogin, ForgotPasswordSerializer, MyTokenObtainPairSerializer, RegisterSerializer, EmailVerificationSerializer, LoginSerializer, PropertyListSerializer, PropertySerializer, GoogleAuthSerializer, RentInvoiceSerializer, IssueSerializer
+from .serializers import AcceptLinkUserToPropertySerializer, MapSerializer, IssueMessageSerializer, LinkUserToPropertyRequestSerializer, SummaryFetchSerializer, PasswordResetSerializer, SetTypeAfterGapiLogin, ForgotPasswordSerializer, MyTokenObtainPairSerializer, RegisterSerializer, EmailVerificationSerializer, LoginSerializer, PropertyListSerializer, PropertySerializer, GoogleAuthSerializer, RentInvoiceSerializer, IssueSerializer
 from base.models import User, PropertyItem, OwnerSummary, RentInvoice, Issue, IssueMessage
 from .permissions import IsTenantPermission
 from .utils import Util
@@ -45,7 +45,7 @@ class PropertyListAPIView(APIView):
                 serializer = PropertyListSerializer(property_item)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             except PropertyItem.DoesNotExist:
-                return Response({"error": "There is no property linked to this account."}, status=status.HTTP_404_NOT_FOUND)
+                return Response([], status=status.HTTP_200_OK)
             
         property_items = user.propertyitem_set.all().order_by("-updated_at")
         serializer = PropertyListSerializer(property_items, many=True)
@@ -55,6 +55,7 @@ class PropertyListAPIView(APIView):
         user = request.user
         owner_summary = OwnerSummary.objects.get(user_id=user.id)
         request.data['owner'] = user.id
+        request.data['owner_email'] = user.email
         serializer = PropertySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -162,6 +163,7 @@ class AcceptLinkUserToPropertyRequestAPIView(APIView):
                     serializer = self.serializer_class(data=payload['user_link_data'])
                     if serializer.is_valid():
                         property_item.tenant = user
+                        property_item.rental_first_day = datetime.date.today()
                         property_item.rent_due_day = payload['user_link_data']['due_day']
                         property_item.save()
                         return Response({'message': 'Success!', 'address': f'{property_item.address}, {property_item.city}', 'price': f'{property_item.price}', 'due_day': property_item.rent_due_day}, status=status.HTTP_200_OK)
@@ -171,6 +173,16 @@ class AcceptLinkUserToPropertyRequestAPIView(APIView):
                 return Response({'error': 'Property not found!'}, status=status.HTTP_404_NOT_FOUND)
         except:
              return Response({'error': 'Link is invalid!'}, status=status.HTTP_400_BAD_REQUEST)
+
+@permission_classes([IsAuthenticated])
+class MapAPIView(GenericAPIView):
+    def get(self, request):
+        try:
+            coords = PropertyItem.objects.all()
+            serializer = MapSerializer(coords, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response({"error": "Something went wrong!"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @permission_classes([IsAuthenticated])
 class RentInvoiceAPIView(APIView):
@@ -256,7 +268,7 @@ class IssueAPIView(APIView):
                 serializer = IssueSerializer(issues, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             except:
-                return Response({"message": "There are no issues."}, status=status.HTTP_204_NO_CONTENT)
+                return Response([], status=status.HTTP_200_OK)
         return Response({"error": "Something went wrong. Try again!"}, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
@@ -286,6 +298,7 @@ class IssueAPIView(APIView):
                     owner_summary = OwnerSummary.objects.get(user_id=property_item.owner_id)
                     data['property_owner'] = property_item.owner.id
                     data['property_name'] = property_item.name
+                    data['created_by'] = user.id
                     serializer = self.serializer_class(data=data)
                     if serializer.is_valid():
                         owner_summary.open_issues = F('open_issues') + 1
@@ -441,7 +454,6 @@ class PasswordResetAPIView(GenericAPIView):
         
         return Response('Password changed!', status=status.HTTP_200_OK)
 
-
 class VerifyEmail(APIView):
     serializer_class = EmailVerificationSerializer
 
@@ -480,7 +492,6 @@ class VerifyEmail(APIView):
         except:
             return Response({'message': 'Something went wrong!'}, status=status.HTTP_400_BAD_REQUEST)
             
-
 class LoginAPIView(GenericAPIView):
     serializer_class = LoginSerializer
 

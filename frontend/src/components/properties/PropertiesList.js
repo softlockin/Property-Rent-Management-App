@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { Box, Paper, Typography, useTheme } from "@mui/material";
+import { Paper, Typography, useTheme } from "@mui/material";
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 
 const PropertiesList = ({ data, setEditModalOpen, setSelectedProperty }) => {
