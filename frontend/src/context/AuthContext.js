@@ -107,13 +107,11 @@ export const AuthProvider = ({children}) => {
     }, [user, gapiUserType])
 
     useEffect(()=>{
-        // let fourDays = 1000*3600*24*4
-        let fourMinutes = 1000*60*4
         let interval = setInterval(()=> {
             if(authTokens){
                 updateToken()
             }
-        }, fourMinutes)
+        }, 1000*60*60*23)
         return ()=> clearInterval(interval)
     }, [authTokens])
 

@@ -520,11 +520,8 @@ const RegisterPage = () => {
                     </Stack>
                 </Paper>
             </Box>
-            <Box sx={{height: "100vh", width: "100vw", borderRadius: "50px 0 0 50px", background:"#fff", display: {xs: "none", lg:"block"}}} />
         </Stack>
     </Box>
-    
-    
     </>
   )
 }
