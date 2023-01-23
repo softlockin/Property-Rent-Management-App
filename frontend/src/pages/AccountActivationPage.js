@@ -128,7 +128,7 @@ const AccountActivationPage = () => {
   return (
     <>
     <Container>
-      <Stack direction="row" justifyContent="center" mt={10}>
+      <Stack direction="row" justifyContent="center" sx={{marginTop: "150px"}}>
         <Paper elevation={5} sx={{borderRadius:"35px", textAlign:"center", padding:"10px", width:"422px"}}>
             <Stack direction="column" justifyContent="center" alignItems="center">
                 <Typography

@@ -11,7 +11,7 @@ const AccountLinkingPage = (props) => {
     const {authTokens} = useContext(AuthContext)
     const navigate = useNavigate()
     const theme = useTheme()
-    const matches = useMediaQuery(theme.breakpoints.up('lg'));
+    const switchMobile = useMediaQuery(theme.breakpoints.down('bss'));
     const [property, setProperty] = useState({})
     const [values, setValues] = useState({
         errorRaised: false,
@@ -76,7 +76,7 @@ const AccountLinkingPage = (props) => {
           mr={5}
           ml={5}
         >
-          <Paper elevation={5} sx={{borderRadius:"35px", textAlign:"center", padding:"10px", width:"422px"}}>
+          <Paper elevation={5} sx={{borderRadius:"35px", textAlign:"center", padding:"10px", width: `${switchMobile ? "90vw" : "422px"}`}}>
             <Stack direction="column" justifyContent="center" alignItems="center">
                 <Typography
                 sx={{padding:"35px"}}
@@ -93,33 +93,48 @@ const AccountLinkingPage = (props) => {
                 <>
                 <Stack direction="column" justifyContent="flex-start" alignItems="center">
                     <Grid container spacing={1} sx={{width: "100%", padding: "25px 0px 25px 15px"}}>
-                        <Grid item md={12}>
+                        <Grid item xs={12}>
                             <Alert variant="outlined" severity="success" sx={{marginTop:"5px", marginBottom:"15px"}}>
                                 Account linked successfully!
                             </Alert>
                         </Grid>
-                        <Grid item md={12}>
+                        <Grid item xs={12}>
+                            <Typography 
+                                variant="subtitle2"
+                                mt={2}
+                                >Address
+                            </Typography>
                             <Typography 
                                 variant="body1"
-                                mt={2}
-                                // sx={{color:"green"}} 
-                                >Address: {property.address}
+                                mt={0}
+                                sx={{backgroundColor: theme.palette.secondary.light, color: theme.palette.secondary.main}}
+                                >{property.address}
                             </Typography>
                         </Grid>
-                        <Grid item md={12}>
+                        <Grid item xs={12}>
+                            <Typography 
+                                variant="subtitle2"
+                                mt={2}
+                                >Price
+                            </Typography>
                             <Typography 
                                 variant="body1"
-                                mt={2}
-                                // sx={{color:"green"}} 
-                                >Price: {property.price}
+                                mt={0}
+                                sx={{backgroundColor: theme.palette.secondary.light, color: theme.palette.secondary.main}}
+                                >{property.price}
                             </Typography>
                         </Grid>
-                        <Grid item md={12}>
+                        <Grid item xs={12}>
+                            <Typography 
+                                variant="subtitle2"
+                                mt={2}
+                                >Rent due day
+                            </Typography>
                             <Typography 
                                 variant="body1"
-                                mt={2}
-                                // sx={{color:"green"}} 
-                                >Rent due day: {property.due_day}
+                                mt={0}
+                                sx={{backgroundColor: theme.palette.secondary.light, color: theme.palette.secondary.main}}
+                                >{property.due_day+function nth(n){return["st","nd","rd"][((n+90)%100-10)%10-1]||"th"}(parseInt(property.due_day))+" monthly"}
                             </Typography>
                         </Grid>                      
                     </Grid>

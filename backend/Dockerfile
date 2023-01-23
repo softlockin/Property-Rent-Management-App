@@ -17,4 +17,4 @@ RUN pip install -r requirements.txt
 
 EXPOSE 8000
 
-CMD service cron start && pytcrohon manage.py runserver 0.0.0.0:8000
+CMD service cron start && python manage.py runserver 0.0.0.0:8000
