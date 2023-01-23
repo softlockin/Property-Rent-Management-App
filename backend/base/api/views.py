@@ -178,7 +178,7 @@ class AcceptLinkUserToPropertyRequestAPIView(APIView):
 class MapAPIView(GenericAPIView):
     def get(self, request):
         try:
-            coords = PropertyItem.objects.all()
+            coords = PropertyItem.objects.filter(tenant=None)
             serializer = MapSerializer(coords, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except:
